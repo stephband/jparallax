@@ -6,7 +6,7 @@
 // webdev.stephband.info/jparallax/
 //
 // Dependencies:
-// jQuery 1.3.x (jquery.com)
+// jQuery > 1.3.3 (jquery-nightly.js)
 
 (function(jQuery) {
 
@@ -17,21 +17,20 @@ var plugin = "parallax";
 
 var undefined,
     options = {
-        mouseport:              jQuery(),               // Mouseport
-        xparallax:              true,                   // Sets directions to move in
+        mouseport:              jQuery(window),         // Mouseport
+        xparallax:              true,                   // Sets directions to travel in
         yparallax:              true,                   //
         xorigin:                0.5,                    // Sets default alignment - only comes into play when travel is not 1
         yorigin:                0.5,                    //
-        xtravel:                1,                      // Factor by which travel is amplified
+        xtravel:                1,                      // Factor by which travel is 'amplified'
         ytravel:                1,                      //
-        takeoverFactor:         0.66,                   // Sets rate of decay curve for catching up with target mouse position
-        takeoverThresh:         0.002,                  // Sets the distance within which virtualmouse is considered to be on target, as a multiple of mouseport width.
+        takeoverDecay:          0.66,                   // Sets rate of decay curve for catching up with target mouse position
+        takeoverThresh:         0.002,                  // Sets the distance within which virtualmouse is considered to be on target, as a multiple of mouseport width
         frameDuration:          25,                     // In milliseconds
-        layerFreezeClass:       'freeze',               // Class added to layer when frozen
-        layerCss:               {position: "absolute"}  // CSS given to layers
+        layerFreezeClass:       'freeze'                // Class added to layer when frozen
     },
     value = {left: 0, top: 0, middle: 0.5, center: 0.5, centre: 0.5, right: 1, bottom: 1},
-    abs = Maths.abs,
+    abs = Math.abs,
     regex = {
         px:         /^\d+\s?px$/,
         percent:    /^\d+\s?%$/,
@@ -39,10 +38,10 @@ var undefined,
         hash:       /^#/
     },
     pointer = [],
-    Mouse = function(){
+    Mouse = function(options){
         this.ontarget   = false;
-        this.thresh     = 0.01;
-        this.decay      = 0.666;
+        this.thresh     = options.takeoverThresh || 0.01;
+        this.decay      = options.takeoverDecay || 0.666;
         this.pos        = [0.5, 0.5];
         this.updatePos  = function(portSize, pointerPos){
             var pos = [], x = 2;
@@ -64,14 +63,20 @@ var undefined,
             return pos;
         };
     },
-    portObj = function(elem){
-        var offset = elem.is('*') ? elem.offset() : {left: 0, top: 0} ;         // Check if elem is a DOM element. If not (ie. window or document), offset [0, 0].
-        
-        this.elem           = elem;
-        this.size           = [elem.width(), elem.height()];
-        this.pos            = [offset.left, offset.top];
-        this.activeOutside  = false;
-        this.active         = function(pointer){
+    Port = function(elem, options){
+        var self = this;
+        this.elem = elem;
+        this.updateSize = function(){
+            self.size = [self.elem.width(), self.elem.height()];
+        };
+        this.updatePos = function(){
+            var elem = self.elem;
+                offset = elem.offset() || {left: 0, top: 0};
+            
+            this.pos = [offset.left, offset.top];
+        };
+        this.activeOutside = (options && options.activeOutside) || false;
+        this.active = function(pointer){
             var pos = this.pos,
                 size = this.size,
                 activeOutside = this.activeOutside,
@@ -107,17 +112,12 @@ var undefined,
             // No.
             return false;
         };
-        
-        var thing = 6;
-        
         this.enter = function(e){
             var port = e.data.port;
             
             port.inside = 1;
             
             //port.pointer = [e.pageX - port.pos[0], e.pageY - port.pos[1]];
-            
-            //console.log(port.pointer);
         };
         this.leave = function(e){
             var port = e.data.port,
@@ -131,18 +131,25 @@ var undefined,
             // Truncate exit pos at port boundaries
             while (x--) { port.pointer[x] = port.pointer[x] < 0 ? 0 : port.pointer[x] > port.size[x] ? port.size[x] : port.pointer[x] ; }
             
-            console.log(port.pointer);            
+            //console.log(port.pointer);            
         };
+        
+        jQuery(window)
+        .bind('resize', this.updateSize)
+        .bind('resize', this.updatePos);
         
         elem
         .bind('mouseenter', {port: this}, this.enter)
         .bind('mouseleave', {port: this}, this.leave);
+        
+        this.updateSize();
+        this.updatePos();
     },
-    layerObj = function(elem){
+    Layer = function(elem, options){
         this.elem   = elem;
-        this.size   = [elem.width(), elem.height()];
-        this.trav   = [1, 1];
-        this.trpx   = [false, false];
+        this.size   = options.size || [elem.width(), elem.height()];
+        this.trav   = options.travel || [1, 1];
+        this.trpx   = options.travelpx || [false, false];
         this.offset = [0, 0];
         this.pos    = [];
         this.updatePos = function(mousePos){
@@ -167,10 +174,27 @@ var undefined,
     },
     actions = {
         freeze: function(e){
+            jQuery(this).unbind('frame.'+plugin);
             return false;
         },
         unfreeze: function(e){
+            // Start animating layer, passing options in as e.data
+            // Special event 'frame' will pick up and use frameDuration
+            jQuery(this).bind('frame.'+plugin, e.data, actions.update);
             return false;
+        },
+        update: function(e){
+            var data = jQuery(this).data(plugin),
+                options = e.data,
+                layer = data.layer,
+                mouse = data.mouse,
+                port = options.port;
+            
+            if (port.active(pointer)) {
+                mouse.updatePos(port.size, port.pointer);
+                layer.updatePos(mouse.pos);
+                layer.updateCss();
+            };
         }
     };
 
@@ -200,36 +224,24 @@ jQuery.fn[plugin] = function(o){
     
     var options = jQuery.extend({}, jQuery.fn[plugin].options, o);
     
-    var mport = new portObj(options.mouseport);
-    var mouse = new Mouse();
+    var port = new Port(options.mouseport, options);
+    var mouse = new Mouse(options);
     
-    // Alter this to use jquery.event.special.frame
-    jQuery.timer.init({frameDuration: options.frameDuration});
+    options.port = port;
     
     return this.each(function(){
         
-        var layer = new layerObj(jQuery(this));
+        var layer = new Layer(jQuery(this), options);
         
-        jQuery.extend(layer, {
-            trav: [1, 1],
-            trpx: [false, false],
-            offset: [0, 0]
+        jQuery(this).data(plugin, {
+            layer: layer,
+            mouse: mouse
         });
         
-        jQuery()
-        .bind('frame', function(e){
-            var pointer = jQuery.pointer();
-            
-            if (mport.active(pointer)) {
-                mouse.updatePos(mport.size, mport.pointer);
-                layer.updatePos(mouse.pos);
-                layer.updateCss();
-            };
-        });
     })
-    .bind("freeze", actions.freeze)
-    .bind("unfreeze", actions.unfreeze)
-    .css(options.layerCss);
+    .bind("freeze", options, actions.freeze)
+    .bind("unfreeze", options, actions.unfreeze)
+    .trigger("unfreeze");
 }
 
 // RUN
@@ -241,10 +253,7 @@ jQuery.fn[plugin].options = options;
 jQuery(document).ready(function(){
     jQuery(window)
     .mousemove(function(e){
-        pointer = [ e.pageX, e.pageY ];
-    })
-    .resize(function(){
-    
+        pointer = [e.pageX, e.pageY];
     });
 });
 
