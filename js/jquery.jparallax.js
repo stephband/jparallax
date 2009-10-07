@@ -6,14 +6,16 @@
 // webdev.stephband.info/jparallax/
 //
 // Dependencies:
-// jQuery 1.2.6 - 1.3.x (jquery.com)
+// jQuery 1.3.x (jquery.com)
 
-//(function(jQuery) {
+(function(jQuery) {
 
 // VAR
 
-var plugin = "parallax",
-    undefined,
+// Plugin name
+var plugin = "parallax";
+
+var undefined,
     options = {
         mouseport:              jQuery(),               // Mouseport
         xparallax:              true,                   // Sets directions to move in
@@ -29,22 +31,24 @@ var plugin = "parallax",
         layerCss:               {position: "absolute"}  // CSS given to layers
     },
     value = {left: 0, top: 0, middle: 0.5, center: 0.5, centre: 0.5, right: 1, bottom: 1},
+    abs = Maths.abs,
     regex = {
         px:         /^\d+\s?px$/,
         percent:    /^\d+\s?%$/,
         html:       /\.html?\s?$/,
         hash:       /^#/
     },
-    mouseObj = function(){
+    pointer = [],
+    Mouse = function(){
         this.ontarget   = false;
         this.thresh     = 0.01;
         this.decay      = 0.666;
         this.pos        = [0.5, 0.5];
         this.updatePos  = function(portSize, pointerPos){
-            var pos = [], x;
+            var pos = [], x = 2;
             
             // Calculate position as ratio
-            x = 2; while (x--) { pos[x] = pointerPos[x] / portSize[x]; }
+            while (x--) { pos[x] = pointerPos[x] / portSize[x]; }
             
             if (!this.ontarget) {
                 if ( distance(this.pos, pos ) < this.thresh) {
@@ -117,7 +121,7 @@ var plugin = "parallax",
         };
         this.leave = function(e){
             var port = e.data.port,
-                x;
+                x = 2;
             
             port.inside = -1;
             
@@ -125,7 +129,7 @@ var plugin = "parallax",
             port.pointer = [e.pageX - port.pos[0], e.pageY - port.pos[1]];
             
             // Truncate exit pos at port boundaries
-            x = 2; while (x--) { port.pointer[x] = port.pointer[x] < 0 ? 0 : port.pointer[x] > port.size[x] ? port.size[x] : port.pointer[x] ; }
+            while (x--) { port.pointer[x] = port.pointer[x] < 0 ? 0 : port.pointer[x] > port.size[x] ? port.size[x] : port.pointer[x] ; }
             
             console.log(port.pointer);            
         };
@@ -172,34 +176,34 @@ var plugin = "parallax",
 
 // FUNCTIONS
 
-function distance(start, end){                                              // Takes two coord arrays of the form [x, y]
+// Takes two coord arrays of the form [x, y], returns vector distance
+function distance(start, end){
     var d = [end[0] - start[0], end[1] - start[1]];
-    return Math.sqrt( d[0] * d[0] + d[1] * d[1] ) ;
+    return Math.sqrt( d[0] * d[0] + d[1] * d[1] );
 }
 
-function quickDistance(start, end){                                         // Takes two coord arrays of the form [x, y]
-    var x = absolute(end[0] - start[0]),
-        y = absolute(end[1] - start[1]);
+// Takes two coord arrays of the form [x, y], returns shortest difference
+function quickDistance(start, end){
+    var x = abs(end[0] - start[0]),
+        y = abs(end[1] - start[1]);
     
     return x > y ? x : y ;
 }
 
 function parseValue(value) { return this.lib[value]; }
-
-function absolute(x) { return x < 0 ? -x : x; }
-
 parseValue.lib = value;
 
 
 // PLUG DEFINITION
 
-jQuery.fn[plugin] = function(o){                                      // TEST: test_plug.html
+jQuery.fn[plugin] = function(o){
     
     var options = jQuery.extend({}, jQuery.fn[plugin].options, o);
     
     var mport = new portObj(options.mouseport);
-    var mouse = new mouseObj();
+    var mouse = new Mouse();
     
+    // Alter this to use jquery.event.special.frame
     jQuery.timer.init({frameDuration: options.frameDuration});
     
     return this.each(function(){
@@ -228,16 +232,20 @@ jQuery.fn[plugin] = function(o){                                      // TEST: t
     .css(options.layerCss);
 }
 
-jQuery.fn[plugin].options = options;
-
 // RUN
 
-jQuery.pointer.init();
+jQuery.fn[plugin].options = options;
+
+// READY
 
 jQuery(document).ready(function(){
-
+    jQuery(window)
+    .mousemove(function(e){
+        pointer = [ e.pageX, e.pageY ];
+    })
+    .resize(function(){
+    
+    });
 });
 
-
-
-//})(jQuery);
+})(jQuery);
