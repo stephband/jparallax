@@ -23,6 +23,27 @@ a img {
     border:none;
 }
 
+a:hover,
+a:focus {
+    text-decoration: underline;
+}
+a {
+    text-decoration: none;
+}
+
+ul.horizontal {
+    list-style: none;
+}
+ul.horizontal li {
+    float: left;
+    padding: 0 0.6em;
+    border-right: 1px solid black;
+    height: 1.2em;
+}
+ul.horizontal li.last {
+    border-right: none;
+}
+
 /* Clearfix
    http://www.positioniseverything.net/easyclearing.html
    with added position relative */
