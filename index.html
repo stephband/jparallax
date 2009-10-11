@@ -43,12 +43,12 @@
     <div class="blue parallax-layer"></div>
 </div>
 
-<div>
-    <a href="#freeze">freeze</a>
-    <a href="#freezeto50">freeze to x: 50%, y: 50%</a>
-    <a href="#freezeto60">freeze to x: 0.52, y: 0.52</a>
-    <a href="#unfreeze">unfreeze</a>
-</div>
+<ul class="horizontal">
+    <li><a href="#freeze">{type: 'freeze'}</a></li>
+    <li><a href="#freezeto50">{type: 'freeze', x: '50%', y: '50%'}</a></li>
+    <li><a href="#freezeto60">{type: 'freeze', x: 0.52, y: 0.52}</a></li>
+    <li class="last"><a href="#unfreeze">unfreeze</a></li>
+</ul>
 
 
 <script type="text/javascript" src="js/jquery-nightly.js"></script>
