@@ -29,6 +29,8 @@
     .green      { width: 2000px; height: 2000px; background: url('images/parallax_target/target_green.png'); }
     .blue       { width: 2000px; height: 2000px; background: url('images/parallax_target/target_blue.png'); }
     
+    .freeze     { background-color: red; }
+    
 </style>
 
 </head>
@@ -43,6 +45,8 @@
 
 <div>
     <a href="#freeze">freeze</a>
+    <a href="#freezeto50">freeze to x: 50%, y: 50%</a>
+    <a href="#freezeto60">freeze to x: 0.52, y: 0.52</a>
     <a href="#unfreeze">unfreeze</a>
 </div>
 
@@ -52,14 +56,24 @@
 <script type="text/javascript" src="js/jquery.jparallax.js"></script>
 <script type="text/javascript">
     jQuery(document).ready(function(){
-        jQuery(".parallax-layer").parallax();
+        jQuery(".parallax-layer").parallax({
+            mouseport: jQuery(".port")
+        });
         
         jQuery("a[href='#freeze']").bind('click', function(e){
-            jQuery(".blue").trigger('freeze');
+            jQuery(".red").trigger({type: 'freeze'});
+        });
+
+        jQuery("a[href='#freezeto50']").bind('click', function(e){
+            jQuery(".red").trigger({type: 'freeze', x: '50%', y: '50%'});
+        });
+
+        jQuery("a[href='#freezeto60']").bind('click', function(e){
+            jQuery(".red").trigger({type: 'freeze', x: 0.52, y: 0.52});
         });
         
         jQuery("a[href='#unfreeze']").bind('click', function(e){
-            jQuery(".blue").trigger('unfreeze');
+            jQuery(".red").trigger('unfreeze');
         })
     });
 </script>
