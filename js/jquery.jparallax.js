@@ -10,10 +10,10 @@
 
 (function(jQuery) {
 
-// VAR
-
 // Plugin name
 var plugin = "parallax";
+
+// VAR
 
 var undefined,
     options = {
@@ -24,7 +24,7 @@ var undefined,
         yorigin:                0.5,                    //
         xtravel:                1,                      // Factor by which travel is 'amplified'
         ytravel:                1,                      //
-        takeoverDecay:          0.66,                   // Sets rate of decay curve for catching up with target mouse position
+        takeoverDecay:          0.66,                   // 0 - instant, 1 - forever. Sets rate of decay curve for catching up with target mouse position
         takeoverThresh:         0.002,                  // Sets the distance within which virtualmouse is considered to be on target, as a multiple of mouseport width
         frameDuration:          30,                     // In milliseconds
         freezeClass:            'freeze'                // Class added to layer when frozen
@@ -35,104 +35,7 @@ var undefined,
         px:         /^\d+\s?px$/,
         percent:    /^\d+\s?%$/
     },
-    pointer = [0.5, 0.5],
-    // Event handlers
-    actions = {
-        freeze: function(e){
-            var elem = jQuery(this),
-                local = elem.data(plugin),
-                global = e.data,
-                mouse = local.mouse || local.freeze || global.mouse,
-                x = regex.percent.exec(e.x) ? parseFloat(e.x.replace(/%$/, ''))/100 : (e.x || mouse.pointer[0]) ,
-                y = regex.percent.exec(e.y) ? parseFloat(e.y.replace(/%$/, ''))/100 : (e.y || mouse.pointer[1]) ;
-            
-            // Store position, copying mouse pointer
-            local.freeze = {
-                pointer: [x, y]
-            }
-            
-            // Create local mouse, passing in current pointer with options
-            global.pointer = mouse.pointer;
-            local.mouse = new Mouse(global);
-                
-            elem
-            .bind('frame.'+plugin, global, actions.update);
-        },
-        unfreeze: function(e){
-            var elem = jQuery(this),
-                local = elem.data(plugin),
-                global = e.data;
-            
-            if (local.freeze) {
-                // Create local mouse, passing local freeze pointer with options
-                global.pointer = local.mouse ? local.mouse.pointer : local.freeze.pointer ;
-                local.mouse = new Mouse(global);
-                
-                // Destroy local.freeze
-                local.freeze = null;
-                
-                // Animate
-                elem
-                .removeClass(options.freezeClass)
-                .bind('frame.'+plugin, global, actions.update);
-            }
-        },
-        activate: function(e){
-            var global = e.data;
-            
-            global.mouse.ontarget = false;
-            
-            // Animate unfrozen layers
-            this
-            .not('.'+global.freezeClass)
-            .bind('frame.'+plugin, global, actions.update);
-        },
-        update: function(e){
-            var elem = jQuery(this),
-                global = e.data,
-                local = elem.data(plugin),
-                port = global.port,
-                mouse = local.mouse;
-            
-            // Layer has it's own mouse
-            if ( mouse ) {
-                // Process mouse and destroy it when it hits target
-                if ( mouse.update( local.freeze ? local.freeze.pointer : port.pointer ) ) {
-                    local.mouse = null;
-                    if (local.freeze) {
-                        elem
-                        .unbind('frame.'+plugin)
-                        .addClass(global.freezeClass);
-                    }
-                }
-            }
-            // Layer responds to global mouse
-            else {
-                mouse = global.mouse;
-                
-                // Only process global objects once per frame
-                if ( global.timeStamp !== e.timeStamp ) {
-                    global.timeStamp = e.timeStamp;
-                    
-                    // console.log('Frame: '+e.frameCount);
-                    
-                    // The port is active
-                    if ( port.update(pointer) || !mouse.ontarget ) {
-                        mouse.update(port.pointer);
-                    }
-                }
-                
-                // When no longer active, unbind
-                if ( mouse.ontarget && !port.active ) {
-                    elem.unbind('frame.'+plugin);
-                }
-            }
-            
-            local.layer.update(mouse.pointer);
-            
-            return false;
-        }
-    };
+    pointer = [0.5, 0.5];
 
 // CONSTRUCTORS
 
@@ -141,7 +44,6 @@ function Mouse(options){
     this.thresh = options.takeoverThresh || 0.01;
     this.decay = options.takeoverDecay || 0.666;
     this.pointer = options.pointer || [0, 0];
-    
     this.update = function(pointer){
         var decay = this.decay,
         
@@ -150,9 +52,8 @@ function Mouse(options){
             this.pointer = pointer;
         }
         // Pointer has arrived within the target threshold
-        else if ( distance(this.pointer, pointer) < this.thresh ) {
+        else if ( quickDistance(this.pointer, pointer) < this.thresh ) {
             this.ontarget = true;
-            // console.log('ONTARGET');
             this.pointer = pointer;
         }
         // Pointer is nowhere near the target
@@ -164,8 +65,6 @@ function Mouse(options){
             }
             this.pointer = lagPointer;
         }
-        
-        return this.ontarget;
     };
 }
     
@@ -173,17 +72,7 @@ function Port(elem, options){
     var self = this,
         inside = 0,
         leaveCoords;
-    
-    this.elem = elem;
-    this.updateSize = function(){
-        self.size = [self.elem.width(), self.elem.height()];
-    };
-    this.updatePos = function(){
-        var elem = self.elem,
-            offset = elem.offset() || {left: 0, top: 0};
-        
-        self.pos = [offset.left, offset.top];
-    };
+
     this.pointer = options.pointer || [0, 0],
     this.active = false,
     this.activeOutside = (options && options.activeOutside) || false;
@@ -196,16 +85,16 @@ function Port(elem, options){
         // Is mouse inside port?
         // Yes. Calculate pointer as ratio.
         if ( inside > 0 ) {
+            this.active = true;
             while (x--) {
                 pointer[x] = (coords[x] - pos[x]) / size[x];
             }
             this.pointer = pointer;
-            this.active = true;
-            return true;
+            return;
         }
         // No, but it only just went outside, so make one last move.
         if ( inside < 0 ) {
-            this.inside = 0;
+            inside = 0;
             this.active = true;
             
             // Get coords stored by mouseleave event
@@ -217,11 +106,17 @@ function Port(elem, options){
                 pointer[x] = pointer[x] < 0 ? 0 : pointer[x] > 1 ? 1 : pointer[x] ;
             }
             this.pointer = pointer;
-            return true;
+            return;
         }
         // No.
         this.active = false;
-        return false;
+    };
+    this.updateSize = function(){
+        self.size = [elem.width(), elem.height()];
+    };
+    this.updatePos = function(){
+        var offset = elem.offset() || {left: 0, top: 0};
+        self.pos = [offset.left, offset.top];
     };
     
     jQuery(window)
@@ -242,8 +137,6 @@ function Port(elem, options){
 }
 
 function Layer(elem, options){
-    this.elem   = elem;
-    this.size   = options.size || [elem.width(), elem.height()];
     this.trav   = options.travel || [1, 1];
     this.trpx   = options.travelpx || [false, false];
     this.offset = [0, 0];
@@ -265,8 +158,13 @@ function Layer(elem, options){
             marginTop:  (trpx[1]) ? pos[1] * -1 + 'px' : pos[1] * size[1] * -1 + 'px'
         };
         
-        this.elem.css(css);
+        elem.css(css);
     };
+    this.updateSize = function(size){
+        this.size = size || [elem.width(), elem.height()];
+    };
+    
+    this.updateSize(options.size);
 }
 
 // FUNCTIONS
@@ -285,6 +183,58 @@ function quickDistance(start, end){
     return x > y ? x : y ;
 }
 
+// EVENT HANDLERS
+
+function update(e){
+    var elem = jQuery(this),
+        global = e.data,
+        local = elem.data(plugin),
+        port = global.port,
+        mouse = local.mouse;
+    
+    // Layer has it's own mouse
+    if ( mouse ) {
+        // Process mouse
+        mouse.update( local.freeze ? local.freeze.pointer : port.pointer );
+
+        // Destroy it when it hits target
+        if ( mouse.ontarget ) {
+            local.mouse = null;
+
+            // And stop animating frozen layers
+            if (local.freeze) {
+                elem
+                .unbind('frame.'+plugin)
+                .addClass(global.freezeClass);
+            }
+        }
+    }
+    // Layer responds to global mouse
+    else {
+        mouse = global.mouse;
+        
+        // Process global objects once per frame
+        if ( global.timeStamp !== e.timeStamp ) {
+            global.timeStamp = e.timeStamp;
+            
+            // Process mouseport
+            port.update(pointer)
+            
+            // And mouse pointer
+            if ( port.active || !mouse.ontarget ) {
+                mouse.update(port.pointer);
+            }
+        }
+        
+        // When no longer active, unbind
+        if ( mouse.ontarget && !port.active ) {
+            elem.unbind('frame.'+plugin);
+        }
+    }
+    
+    local.layer.update(mouse.pointer);
+}
+
 function parseValue(value) { return this.lib[value]; }
 parseValue.lib = value;
 
@@ -292,7 +242,6 @@ parseValue.lib = value;
 // PLUG DEFINITION
 
 jQuery.fn[plugin] = function(o){
-    
     var global = jQuery.extend({}, jQuery.fn[plugin].options, o),
         layers = this,
         port = new Port(global.mouseport, global),
@@ -302,11 +251,59 @@ jQuery.fn[plugin] = function(o){
     global.mouse = mouse;
     
     global.mouseport
-    .bind("mouseenter", global, actions.activate, layers);
+    .bind("mouseenter", function(e){
+        mouse.ontarget = false;
+        
+        // Animate unfrozen layers
+        this
+        .not('.'+global.freezeClass)
+        .bind('frame.'+plugin, global, update);
+    }, layers);
     
     return layers
-    .bind("freeze", global, actions.freeze)
-    .bind("unfreeze", global, actions.unfreeze)
+    .bind("freeze", function(e){
+        var elem = jQuery(this),
+            local = elem.data(plugin),
+            mouse = local.mouse || local.freeze || global.mouse,
+            x = regex.percent.exec(e.x) ? parseFloat(e.x.replace(/%$/, ''))/100 : (e.x || mouse.pointer[0]) ,
+            y = regex.percent.exec(e.y) ? parseFloat(e.y.replace(/%$/, ''))/100 : (e.y || mouse.pointer[1]) ,
+            decay = e.decay;
+        
+        // Store position
+        local.freeze = {
+            pointer: [x, y]
+        }
+        
+        // Create local mouse, passing in current pointer with options
+        local.mouse = new Mouse(global);
+        local.mouse.pointer = mouse.pointer;
+        if (decay !== undefined) local.mouse.decay = decay;
+            
+        elem
+        .bind('frame.'+plugin, global, update);
+    })
+    .bind("unfreeze", function(e){
+        var elem = jQuery(this),
+            local = elem.data(plugin),
+            decay = e.decay,
+            pointer;
+        
+        if (local.freeze) {
+            // Create local mouse, passing local freeze pointer with options
+            pointer = local.mouse ? local.mouse.pointer : local.freeze.pointer ;
+            local.mouse = new Mouse(global);
+            local.mouse.pointer = pointer;
+            if (decay !== undefined) local.mouse.decay = decay;
+            
+            // Destroy local.freeze
+            local.freeze = null;
+            
+            // Animate
+            elem
+            .removeClass(options.freezeClass)
+            .bind('frame.'+plugin, global, update);
+        }
+    })
     .each(function(){
         var layer = jQuery(this),
             layerData = new Layer(layer, global);

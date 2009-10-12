@@ -51,6 +51,7 @@
 
 <ul class="horizontal">
     <li><a href="#freeze">{type: 'freeze'}</a></li>
+    <li><a href="#freezeto40">{type: 'freeze', x: '44%', y: '47%', decay: 0.9}</a></li>
     <li><a href="#freezeto50">{type: 'freeze', x: '50%', y: '50%'}</a></li>
     <li><a href="#freezeto60">{type: 'freeze', x: 0.52, y: 0.52}</a></li>
     <li class="last"><a href="#unfreeze">unfreeze</a></li>
@@ -72,6 +73,10 @@
         
         jQuery("a[href='#freeze']").bind('click', function(e){
             jQuery(".red").trigger({type: 'freeze'});
+        });
+
+        jQuery("a[href='#freezeto40']").bind('click', function(e){
+            jQuery(".red").trigger({type: 'freeze', x: '44%', y: '47%', decay: 0.9});
         });
 
         jQuery("a[href='#freezeto50']").bind('click', function(e){
