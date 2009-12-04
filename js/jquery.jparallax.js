@@ -43,6 +43,8 @@ var undefined,
 // CONSTRUCTORS
 
 function Mouse(options){
+    var parallax = options.parallax;
+    
     this.ontarget = false;
     this.thresh = options.takeoverThresh || 0.01;
     this.decay = options.takeoverDecay || 0.666;
@@ -63,8 +65,11 @@ function Mouse(options){
         else {
             var lagPointer = [],
                 x = 2;
+            
             while (x--) {
-                lagPointer[x] = pointer[x] + decay * (this.pointer[x] - pointer[x]);
+                if ( parallax[x] ) {
+                    lagPointer[x] = pointer[x] + decay * (this.pointer[x] - pointer[x]) ;
+                }
             }
             this.pointer = lagPointer;
         }
@@ -74,6 +79,7 @@ function Mouse(options){
 function Port(elem, options){
     var self = this,
         inside = 0,
+        parallax = options.parallax,
         leaveCoords;
 
     this.pointer = options.pointer || [0, 0];
@@ -95,8 +101,10 @@ function Port(elem, options){
             }
             
             while (x--) {
-                pointer[x] = (coords[x] - pos[x]) / size[x];
-                pointer[x] = pointer[x] < 0 ? 0 : pointer[x] > 1 ? 1 : pointer[x] ;
+                if ( parallax[x] ) {
+                    pointer[x] = (coords[x] - pos[x]) / size[x] ;
+                    pointer[x] = pointer[x] < 0 ? 0 : pointer[x] > 1 ? 1 : pointer[x] ;
+                }
             }
             
             this.active = true;
@@ -113,9 +121,6 @@ function Port(elem, options){
         var offset = elem.offset() || {left: 0, top: 0},
             left = parseInt(elem.css('borderLeftWidth')) + parseInt(elem.css('paddingLeft')),
             top = parseInt(elem.css('borderTopWidth')) + parseInt(elem.css('paddingTop'));
-        
-        // Test indicator for mouseport position
-        // jQuery("body").append('<div style="position: absolute; width: 2px; height: 2px; background: red; left: '+offset.left+'px; top: '+offset.top+'px;"></div>');
         
         self.pos = [offset.left + left, offset.top + top];
     };
@@ -138,6 +143,8 @@ function Port(elem, options){
 }
 
 function Layer(elem, options){
+    var parallax = options.parallax ;
+    
     this.trav   = options.travel || [1, 1];
     this.trpx   = options.travelpx || [false, false];
     this.offset = [0, 0];
@@ -145,19 +152,30 @@ function Layer(elem, options){
         var pos = [],
             size = this.size,
             trpx = this.trpx,
-            css,
+            css = {},
+            position,
+            margin,
             x = 2;
         
         while (x--) {
-            pos[x] = this.trav[x] * pointer[x] + this.offset[x];
+            if ( parallax[x] ) {
+                pos[x] = this.trav[x] * pointer[x] + this.offset[x];
+                
+                // Calculate css
+                position = (trpx[x]) ? undefined : pos[x] * 100 + '%' ,
+                margin = (trpx[x]) ? pos[x] * -1 + 'px' : pos[x] * size[x] * -1 + 'px' ,
+                
+                // Fill in css object
+                if ( x ) {
+                    css.top = position;
+                    css.marginTop = margin;
+                }
+                else {
+                    css.left = position;
+                    css.marginLeft = margin;
+                }
+            }
         }
-        
-        css =  {
-            left:       (trpx[0]) ? undefined : pos[0] * 100 + '%' ,
-            marginLeft: (trpx[0]) ? pos[0] * -1 + 'px' : pos[0] * size[0] * -1 + 'px' ,
-            top:        (trpx[1]) ? undefined : pos[1] * 100 + '%' ,
-            marginTop:  (trpx[1]) ? pos[1] * -1 + 'px' : pos[1] * size[1] * -1 + 'px'
-        };
         
         elem.css(css);
     };
@@ -249,7 +267,9 @@ parseValue.lib = value;
 // PLUG DEFINITION
 
 jQuery.fn[plugin] = function(o){
-    var global = jQuery.extend({}, jQuery.fn[plugin].options, o),
+    var global = jQuery.extend({}, jQuery.fn[plugin].options, o, {
+            parallax: [ (o.xparallax === false ? false : true ), ( o.yparallax === false ? false : true ) ]
+        }),
         layers = this,
         port = new Port(global.mouseport, global),
         mouse = new Mouse(global);

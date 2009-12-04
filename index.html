@@ -26,7 +26,7 @@
     
     #log        { width: 80%; margin: 1em auto; background: #f8f6f4; }
     
-    .port       { height: 40%; width: 80%; margin: 2em auto; background: #f6f6f6; }
+    .port       { height: 40%; width: 80%; margin: 2em auto; background: #f6f6f6; clear: both; }
     .red        { width: 2000px; height: 2000px; background: url('images/parallax_target/target_red.png'); }
     .green      { width: 2000px; height: 2000px; background: url('images/parallax_target/target_green.png'); }
     .blue       { width: 2000px; height: 2000px; background: url('images/parallax_target/target_blue.png'); }
@@ -35,6 +35,8 @@
     
     #test1      { border: 20px solid #999999; }
     #test2      { padding: 20px; }
+    #test3      { width: 36%; margin-left: 10%; float: left; padding: 0; background: #c3c3c3; }
+    #test4      { width: 36%; margin-right: 10%; float: right; padding: 0; background: #c3c3c3; clear: none; }
     
 </style>
 
@@ -66,6 +68,14 @@
     <li class="last"><a href="#unfreeze">unfreeze</a></li>
 </ul>
 
+<div id="test3" class="port parallax-viewport">
+    <div class="blue parallax-layer"></div>
+    <div class="green parallax-layer"></div>
+</div>
+
+<div id="test4" class="port parallax-viewport">
+    <div class="red parallax-layer"></div>
+</div>
 
 <script type="text/javascript" src="js/jquery-nightly.js"></script>
 <script type="text/javascript" src="js/jquery.event.frame.js"></script>
@@ -78,6 +88,16 @@
         
         jQuery("#test2 .parallax-layer").parallax({
             mouseport: jQuery("#test2")
+        });
+        
+        jQuery("#test3 .parallax-layer").parallax({
+            mouseport: jQuery("#test3"),
+            xparallax: false
+        });
+        
+        jQuery("#test4 .parallax-layer").parallax({
+            mouseport: jQuery("#test4"),
+            yparallax: false
         });
         
         jQuery("a[href='#freeze']").bind('click', function(e){
