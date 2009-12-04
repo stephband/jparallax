@@ -6,7 +6,8 @@
 // webdev.stephband.info/jparallax/
 //
 // Dependencies:
-// jQuery > 1.3.3 (jquery-nightly.js)
+// jquery.event.frame
+// webdev.stephband.info/events/frame/
 
 (function(jQuery) {
 
@@ -37,6 +38,8 @@ var undefined,
     },
     pointer = [0.5, 0.5];
 
+//var log = jQuery("#log");
+
 // CONSTRUCTORS
 
 function Mouse(options){
@@ -45,7 +48,7 @@ function Mouse(options){
     this.decay = options.takeoverDecay || 0.666;
     this.pointer = options.pointer || [0, 0];
     this.update = function(pointer){
-        var decay = this.decay,
+        var decay = this.decay;
         
         // Pointer is already on target
         if (this.ontarget) {
@@ -73,8 +76,8 @@ function Port(elem, options){
         inside = 0,
         leaveCoords;
 
-    this.pointer = options.pointer || [0, 0],
-    this.active = false,
+    this.pointer = options.pointer || [0, 0];
+    this.active = false;
     this.activeOutside = (options && options.activeOutside) || false;
     this.update = function(coords){
         var pos = this.pos,
@@ -83,28 +86,20 @@ function Port(elem, options){
             x = 2;
         
         // Is mouse inside port?
-        // Yes. Calculate pointer as ratio.
+        // Yes.
         if ( inside > 0 ) {
-            this.active = true;
-            while (x--) {
-                pointer[x] = (coords[x] - pos[x]) / size[x];
+            // But it just went outside, so make this the last move, use coords stored by mouseleave event
+            if ( inside === 2 ) {
+                inside = 0;
+                if (leaveCoords) coords = leaveCoords;
             }
-            this.pointer = pointer;
-            return;
-        }
-        // No, but it only just went outside, so make one last move.
-        if ( inside < 0 ) {
-            inside = 0;
-            this.active = true;
             
-            // Get coords stored by mouseleave event
-            if (leaveCoords) coords = leaveCoords;
-            
-            // Truncate pointer at port boundary
             while (x--) {
                 pointer[x] = (coords[x] - pos[x]) / size[x];
                 pointer[x] = pointer[x] < 0 ? 0 : pointer[x] > 1 ? 1 : pointer[x] ;
             }
+            
+            this.active = true;
             this.pointer = pointer;
             return;
         }
@@ -115,8 +110,14 @@ function Port(elem, options){
         self.size = [elem.width(), elem.height()];
     };
     this.updatePos = function(){
-        var offset = elem.offset() || {left: 0, top: 0};
-        self.pos = [offset.left, offset.top];
+        var offset = elem.offset() || {left: 0, top: 0},
+            left = parseInt(elem.css('borderLeftWidth')) + parseInt(elem.css('paddingLeft')),
+            top = parseInt(elem.css('borderTopWidth')) + parseInt(elem.css('paddingTop'));
+        
+        // Test indicator for mouseport position
+        // jQuery("body").append('<div style="position: absolute; width: 2px; height: 2px; background: red; left: '+offset.left+'px; top: '+offset.top+'px;"></div>');
+        
+        self.pos = [offset.left + left, offset.top + top];
     };
     
     jQuery(window)
@@ -128,7 +129,7 @@ function Port(elem, options){
         inside = 1;
     })
     .bind('mouseleave', function(e){
-        inside = -1;
+        inside = 2;
         leaveCoords = [e.pageX, e.pageY];
     });
     
@@ -218,7 +219,7 @@ function update(e){
             global.timeStamp = e.timeStamp;
             
             // Process mouseport
-            port.update(pointer)
+            port.update(pointer);
             
             // And mouse pointer
             if ( port.active || !mouse.ontarget ) {
@@ -231,6 +232,12 @@ function update(e){
             elem.unbind('frame.'+plugin);
         }
     }
+    
+    //log.html(
+    //    'pointer [' + pointer[0].toFixed(2) + ', ' + pointer[1].toFixed(2) + '] ' +
+    //    'port.pointer [' + port.pointer[0].toFixed(2) + ', ' + port.pointer[1].toFixed(2) + '] ' + 
+    //    'mouse.pointer [' + mouse.pointer[0].toFixed(2) + ', ' + mouse.pointer[1].toFixed(2) + '] '
+    //);
     
     local.layer.update(mouse.pointer);
 }
@@ -272,7 +279,7 @@ jQuery.fn[plugin] = function(o){
         // Store position
         local.freeze = {
             pointer: [x, y]
-        }
+        };
         
         // Create local mouse, passing in current pointer with options
         local.mouse = new Mouse(global);
@@ -312,7 +319,7 @@ jQuery.fn[plugin] = function(o){
             layer: layerData
         });
     });
-}
+};
 
 // EXPOSE
 
@@ -321,10 +328,12 @@ jQuery.fn[plugin].options = options;
 // RUN
 
 jQuery(document).ready(function(){
-    jQuery(window)
+    // Pick up and store mouse position on jQuery(document)
+    // IE does not register mousemove on jQuery(window)
+    jQuery(document)
     .mousemove(function(e){
         pointer = [e.pageX, e.pageY];
     });
 });
 
-})(jQuery);
+}(jQuery));

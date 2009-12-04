@@ -24,18 +24,27 @@
     h1          { margin: 0 0 24px;}
     p, code     { width: 845px; margin: 0 auto 24px; display: block; }
     
-    .port       { height: 40%; width: 80%; margin: 2em auto; border: 1px solid #999999; }
+    #log        { width: 80%; margin: 1em auto; background: #f8f6f4; }
+    
+    .port       { height: 40%; width: 80%; margin: 2em auto; background: #f6f6f6; }
     .red        { width: 2000px; height: 2000px; background: url('images/parallax_target/target_red.png'); }
     .green      { width: 2000px; height: 2000px; background: url('images/parallax_target/target_green.png'); }
     .blue       { width: 2000px; height: 2000px; background: url('images/parallax_target/target_blue.png'); }
     
     .freeze     { background-color: red; }
     
+    #test1      { border: 20px solid #999999; }
+    #test2      { padding: 20px; }
+    
 </style>
 
 </head>
 
 <body>
+
+<div id="log">
+0.00, 0.00
+</div>
 
 <div id="test1" class="port parallax-viewport">
     <div class="red parallax-layer"></div>
