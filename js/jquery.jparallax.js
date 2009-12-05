@@ -1,5 +1,5 @@
 // jquery.jparallax.js
-// dev
+// 1.0 - pre
 // Stephen Band
 //
 // Project and documentation site:
@@ -162,17 +162,17 @@ function Layer(elem, options){
                 pos[x] = this.trav[x] * pointer[x] + this.offset[x];
                 
                 // Calculate css
-                position = (trpx[x]) ? undefined : pos[x] * 100 + '%' ,
-                margin = (trpx[x]) ? pos[x] * -1 + 'px' : pos[x] * size[x] * -1 + 'px' ,
+                position = (trpx[x]) ? undefined : pos[x] * 100 + '%' ;
+                margin = (trpx[x]) ? pos[x] * -1 + 'px' : pos[x] * size[x] * -1 + 'px' ;
                 
                 // Fill in css object
-                if ( x ) {
-                    css.top = position;
-                    css.marginTop = margin;
-                }
-                else {
+                if ( x === 0 ) {
                     css.left = position;
                     css.marginLeft = margin;
+                }
+                else {
+                    css.top = position;
+                    css.marginTop = margin;
                 }
             }
         }
@@ -180,7 +180,7 @@ function Layer(elem, options){
         elem.css(css);
     };
     this.updateSize = function(size){
-        this.size = size || [elem.width(), elem.height()];
+        this.size = size || [elem.outerWidth(), elem.outerHeight()];
     };
     
     this.updateSize(options.size);
@@ -205,11 +205,12 @@ function quickDistance(start, end){
 // EVENT HANDLERS
 
 function update(e){
+    
     var elem = jQuery(this),
         global = e.data,
         local = elem.data(plugin),
         port = global.port,
-        mouse = local.mouse;
+        mouse = local && local.mouse;
     
     // Layer has it's own mouse
     if ( mouse ) {
@@ -268,7 +269,7 @@ parseValue.lib = value;
 
 jQuery.fn[plugin] = function(o){
     var global = jQuery.extend({}, jQuery.fn[plugin].options, o, {
-            parallax: [ (o.xparallax === false ? false : true ), ( o.yparallax === false ? false : true ) ]
+            parallax: [ ( o && o.xparallax === false ? false : true ), ( o && o.yparallax === false ? false : true ) ]
         }),
         layers = this,
         port = new Port(global.mouseport, global),
