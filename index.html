@@ -137,24 +137,26 @@ jQuery(document).ready(function(){
     
     <h3>Download</h3>
     <ul>
-        <li><a href="http://webdev.stephband.info/jparallax/js/jquery.jparallax-1.0.js">jquery.jparallax.js</a> [11k] 1.0</li>
+        <li><a href="js/jquery.parallax.js">jquery.parallax.js</a> 11KB | 4KB MINIFIED | 1.5KB GZIPPED</li>
+        <li><a href="http://webdev.stephband.info/jparallax/js/jquery.parallax-1.0.js">jquery.jparallax.js</a> [11k] 1.0</li>
     </ul>  
     <p>jParallax </p>
     
-    <h3>Changes to jParallax (Beta to 1.0)</h3>
-    <p>I aimed to simplify jParallax for first-time users, while adding a couple of often-requested features and refactoring the code for efficiency. Those who are used to the beta versions will find a few things have changed:</p>
+    <h3>Changes to jParallax (Beta &gt; 1.0)</h3>
+    <p>In this release I aimed to simplify jParallax for first-time users, while adding features, fixing problems, and refactoring the code for efficiency. Those who are used to the beta versions will find a few things have changed:</p>
     <ul>
-        <li><strong>Declared on layers </strong><code>.parallax()</code> is now declared on the <em>layers</em> rather than on a 'viewport' element.  This change allows you to be more selective about which elements parallax.</li>
-        <li><strong>Document is the default mouseport</strong> Many people ask how to set up parallax so that it reacts to mouse movement over the whole page. This is now the default behaviour. Use the <code>mouseport</code> option to set another element to react to.</li>
-        <li><strong>Freeze and re-position </strong>jParallax has become more events-based, and you can now freeze layers and send them to specific positions using a couple of custom events: <code>'freeze'</code> and <code>'unfreeze'</code>.</li>
+        <li><strong>Declared on layers </strong><code>.parallax()</code> is now declared on the <em>layers</em> rather than on a 'viewport' element.  You can now be more selective about which elements parallax and which do not, and you can even choose to parallax layers in different viewports at the same time. In short, it's much more flexible.  (It also saves some unnecessary mucking about finding children inside the viewport wrapper, internally.)</li>
+        <li><strong>Freeze and re-position </strong>Freeze layers and send them to specific positions using the custom events <code>'freeze'</code> and <code>'unfreeze'</code>.</li>
+        <li><strong>Document is the default mouseport</strong> Many people ask how to set up parallax so that it reacts to mouse movement over the whole page. This is now the default behaviour. Use the <code>mouseport</code> option to set another element to react to. For the classic parallax-in-a-viewport effect, you will want to set <code>mouseport</code> to the same element you are using as a viewport.</li>
         <li><strong>Set up viewports using CSS </strong>It is up to you to create a viewport, if that's the effect you are looking for, using CSS. jParallax comes with some CSS that will get you started.</li>
-        <li><strong>Set up mouseports using CSS </strong>You can now define where the limits of a mouseport's reactive area are, using CSS borders and padding. You'll find that to be useful for setting up a row of parallaxing thumbnails [hint].</li>
+        <li><strong>Set up mouseports using CSS </strong>You can now define where the limits of a mouseport's reactive area are, using CSS borders and padding. You'll find that to be useful for setting up a row of parallaxing thumbnails [hint, hint].</li>
     </ul>
     <ul>
-        <li><strong>Requires special event 'frame' </strong>jParallax relies on jquery.event.frame.js for animation timing. It's included in the download.</li>
-        <li><strong>Plug name </strong>jParallax adds the namespace <code>.parallax()</code>  to jQuery. I prefer this to <code>.jparallax()</code> because it is more plain-language. However, if you don't like it, you can change it to anything you like with the first variable in the plugin <code>var plugin = 'parallax';</code>.</li>
-        <li><strong>Deprecated </strong><code>linkResponse</code> option has been deprecated in favour of the new <code>freeze</code> event, which allows full control over positioning. It is fairly easy to set up <code>linkResponse</code> functionality using <code>freeze</code> events.</li>
-        <li>Uses 10% less CPU. In my (unscientific) tests, jParallax uses about 10% less CPU in Safari 4, 5% less in Opera 9.8, about the same in Firefox 3.5.5.  I haven't been able to test anything on Windows.</li>
+        <li><strong>Namespace is .parallax() </strong>jParallax adds the namespace <code>.parallax()</code>  to jQuery. I prefer this to <code>.jparallax()</code> because it is more plain-language. However, if you don't like it, you can change it to anything you like with the first variable in the plugin <code>var plugin = 'parallax';</code>.</li>
+        <li><strong>Requires jquery.event.frame </strong>jParallax relies on <a href="http://webdev.stephband.info/events/frame/">jquery.event.frame</a> for animation timing. The special <code>frame</code> event was developed specifically for use with jParallax and other plugins that require frame-based animation timers. It's included in the download. You can read about it at <a href="http://webdev.stephband.info/events/frame/">webdev.stephband.info/events/frame/</a>.</li>
+        <li><strong>Moveable mouseport </strong> In the Beta, jParallax would 'lose' the mouseport if it was moved after jParallax was declared: its position was cached. This has been fixed. Now it's position is cached each time the mouse enters it. (For that reason, you probably shouldn't try moving the mouseport while you're using it.  I can't think of a condition when you might want to do that - a parallax inside a parallax? Anyone?)</li>
+        <li><strong>linkResponse deprecated </strong><code>linkResponse</code> option has been deprecated in favour of the new <code>freeze</code> event, which allows full control over positioning. It is fairly easy to set up <code>linkResponse</code> functionality using <code>freeze</code> events.</li>
+        <li><strong>Uses 10% less CPU</strong> In my (unscientific) tests, which involve watching the CPU meter while playing around with the same test running each version of jParallax, version 1.0 uses about 10% less CPU in Safari 4, 5% less in Opera 9.8, about the same in Firefox 3.5.5.  I haven't been able to do these kinds of tests on Windows. If anyone has some anecdotal results, please send 'em on...</li>
     </ul>
     
     
@@ -214,27 +216,31 @@ jQuery(document).ready(function(){
   <h4>Options <span class="default">default values</span></h4>
   <p>The following options can be passed to jParallax to set its behaviour:</p>
     <dl class="options">
-        <dt>mouseport: jQuery('element') <span class="default">document</span></dt>
+        <dt>mouseport: jQuery object or selector string <span class="default">jQuery(document)</span></dt>
         <dd>Specifies the DOM element to track the mouse in.</dd>
 
         <dt>xparallax: boolean <span class="default">true</span></dt>
         <dt>yparallax: boolean <span class="default">true</span></dt>
-        <dd>Set to false to stop movement in the x or y direction.</dd>
+        <dd>Set to false to disable parallaxing in the x or y direction.</dd>
 
         <dt>mouseActiveOutside: boolean <span class="default">false</span></dt>
-        <dd>Enables mouse response <em>outside</em> the limits of the mouseport, but layers behave as if the mouse was at the edge of the mouseport.</dd>
-
-        <dt>takeoverFactor: 0-1 <span class="default">0.68</span></dt>
-        <dt>takeoverThresh: 0-1 <span class="default">0.002</span></dt>
-        <dd>Sets the speed and accuracy with which the layers 'catch up' with the mouse position when the mouse enters the mouseport from somewhere other from whence it has left. Technically, takeoverFactor is the decay of the approach curve per animation frame, where lower numbers are more decay (and therefore quicker), and takeoverThresh is the distance within which the layer position is considered to have arrived, as a ratio of the mouseport dimension. takeoverThresh is by default a five-hundredth of the mouseport - larger numbers may produce a noticeable 'jump' at the beginning of a new mouse movement.  You shouldn't need to mess with these too much, I just stuck them in there because we all like tweaky-tweaky.</dd>
+        <dd>Enables mouse response <em>outside</em> the limits of the mouseport. Layers behave as if the mouse was at the edge of the mouseport.</dd>
 
         <dt>frameDuration: milliseconds <span class="default">25</span></dt>
-        <dd>With a lot of big layers, you may want to increase the frame duration to save CPU. About 50 is acceptable (20 frames/second). I like it zippy, though. Modern browsers such as <a href="http://www.google.com/chrome/" />Google Chrome</a> have accurate timing, but many older browsers do not do lower than about 15ms.</dd>
+        <dd>Length of time between animation frames. With a lot of big layers, you may want to increase the frame duration to save CPU. About 50 is acceptable (20 frames/second), but I like it zippy. Modern browsers such as <a href="http://www.google.com/chrome/" />Google Chrome</a> have accurate timing, but many older browsers choke below about 15ms.</dd>
 
-        <dt>xorigin: 'left' | 'centre', 'center', 'middle' | 'right' | 0-1 <span class="default">'centre'</span></dt>
-        <dt>yorigin: 'top' | 'centre', 'center', 'middle' | 'bottom' | 0-1 <span class="default">'centre'</span></dt>
-        <dd>Sets default alignment of layers. See 'Layer Options' below for a detailed description.</dd>
+        <dt>xtravel: '<em>n</em>px' | '<em>n</em>%' | 0-1 <span class="default">1</span></dt>
+        <dt>ytravel: '<em>n</em>px' | '<em>n</em>%' | 0-1 <span class="default">1</span></dt>
+        <dd>Limits the range a layer travels, either to an absolute value in pixels, or by a scaling factor expressed as percentage or as a number in the range 0-1. Scaling factors outside this range are also accepted, but be aware that factors below 0 will reverse the direction of travel, and greater than 1 will make layer edges appear inside the viewport.</dd>
 
+        <dt>xorigin: 'left' | 'center', 'middle' | 'right' | 0-1 <span class="default">0.5</span></dt>
+        <dt>yorigin: 'top' | 'center', 'middle' | 'bottom' | 0-1 <span class="default">0.5</span></dt>
+        <dd>Sets default alignment of layers when xtravel or ytravel limit the range a layer travels.</dd>
+
+        <dt>takeoverFactor: 0-1 <span class="default">0.66</span></dt>
+        <dd>Sets the rate at which the layers 'catch up' with the mouse position. 0 is instantly, 1 is forever.</dd>
+        <dt>takeoverThresh: 0-1 <span class="default">0.002</span></dt>
+        <dd>Sets the speed and accuracy with which the layers 'catch up' with the mouse position, when it enters the mouseport from somewhere other from whence it has left. Technically, takeoverFactor is the decay of the approach curve per animation frame, where lower numbers are more decay (and therefore quicker), and takeoverThresh is the distance within which the layer position is considered to have arrived, as a ratio of the mouseport dimension. takeoverThresh is by default a five-hundredth of the mouseport - larger numbers may produce a noticeable 'jump' at the beginning of a new mouse movement.  You shouldn't need to mess with these too much, I stuck them in there because we all like tweaky-tweaky.</dd>
     </dl>
 
     <h4>Events</h4>
@@ -319,9 +325,10 @@ jQuery(document).ready(function(){
   <p>Let me know if you have a site that uses jParallax using the 'Write to me' form at the top of this page.</p>
   
   <h3>Version history</h3>
+  <p>This being my first javascript project of this kind, I've kept these notes as much for myself as anyone. Releasing a plugin really makes you a better developer. I recommend it!</p>
   
   <h4>0.9.9</h4>
-  <p>Basically version 1.0, but until I've fully tested it, it's staying 1% away.</p>
+  <p>This version was withdrawn after I realised that it I'd made something equally complex as the previous version, and it still had bugs. Some ideas from it were used to start a complete re-write that became version 1.0.</p>
   <ul>
     <li>Code majorly refactored.  It's much more j now, and a little smaller.  The anim clock changed, the code got re-shuffled to make it more compact, to re-use more routines and make more use of jQuery goodness.  The biggest internal change is that it now uses vector arrays instead of property objects to store data.</li>
     <li>Implemented events for internal control of calculation and animation, and external control of goodies like "freeze" and "link".</li>
@@ -396,7 +403,7 @@ jQuery(document).ready(function(){
   
   <h4>0.1</h4>
   <ul>
-    <li>Initial port from proof of concept code.  My first jQuery plugin!</li>
+    <li>Initial port to jQuery plugin framework from proof of concept code.  My first jQuery plugin!</li>
     <li>Colour drop demo.</li>
   </ul>
 
