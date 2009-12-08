@@ -5,40 +5,47 @@
 // Project and documentation site:
 // webdev.stephband.info/jparallax/
 //
+// Repository:
+// github.com/stephband/jparallax
+//
 // Dependencies:
 // jquery.event.frame
 // webdev.stephband.info/events/frame/
 
-(function(jQuery) {
+(function(jQuery, undefined) {
 
 // Plugin name
 var plugin = "parallax";
 
 // VAR
 
-var undefined,
-    options = {
+var options = {
         mouseport:              jQuery(window),         // Mouseport
         xparallax:              true,                   // Sets directions to travel in
         yparallax:              true,                   //
-        xorigin:                0.5,                    // Sets default alignment - only comes into play when travel is not 1
-        yorigin:                0.5,                    //
         xtravel:                1,                      // Factor by which travel is 'amplified'
         ytravel:                1,                      //
+        xorigin:                0.5,                    // Sets default alignment - only comes into play when travel is not 1
+        yorigin:                0.5,                    //
         takeoverDecay:          0.66,                   // 0 - instant, 1 - forever. Sets rate of decay curve for catching up with target mouse position
         takeoverThresh:         0.002,                  // Sets the distance within which virtualmouse is considered to be on target, as a multiple of mouseport width
         frameDuration:          30,                     // In milliseconds
         freezeClass:            'freeze'                // Class added to layer when frozen
     },
-    value = {left: 0, top: 0, middle: 0.5, center: 0.5, centre: 0.5, right: 1, bottom: 1},
-    abs = Math.abs,
+    value = {
+        left: 0,
+        top: 0,
+        middle: 0.5,
+        center: 0.5,
+        right: 1,
+        bottom: 1
+    },
     regex = {
         px:         /^\d+\s?px$/,
         percent:    /^\d+\s?%$/
     },
+    abs = Math.abs,
     pointer = [0.5, 0.5];
-
-//var log = jQuery("#log");
 
 // CONSTRUCTORS
 
