@@ -29,30 +29,33 @@
         position: absolute;
     }
     
+    /* Horizontal lists of inline-blocks */
+    /* Tested in Safari 4 | FF 3.5 | Opera 9.6 | IE7 */ 
     #thumbs {
         width: 1212px;
         list-style: none;
         margin: 0;
         padding: 0 12px;
         left: 0;
+        overflow: hidden;
     }
-    
     #thumbs li {
         display: inline;
         margin-right: 12px;
     }
-    
     #thumbs li.last {
         margin-right: 0;
-        
     }
-    
     #thumbs a {
-        background: green;
         display: inline-block;
-        width: 192px; height: 120px;
-        text-indent: -320px;
+        /* stop it creating a gap below the thumb. By default thumb sits on a baseline in Safari / FF. */
+        vertical-align: top;
+        /* padding-top defines the height and pushes any text down out of the box.
+           You can't use -ve text-indent for this as IE7 moves the background, too. */
+        padding-top: 120px; width: 192px; height: 0;
+        /* Hide text that's pushed out of the box. */
         overflow: hidden;
+        /* Block styling */
         -webkit-box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
         -moz-box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
         box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
