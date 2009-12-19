@@ -38,6 +38,8 @@
     #test3      { width: 36%; margin-left: 10%; float: left; padding: 0; background: #c3c3c3; }
     #test4      { width: 36%; margin-right: 10%; float: right; padding: 0; background: #c3c3c3; clear: none; }
     
+    #test2 .parallax-layer { top: 0; left: -984px; }
+    
 </style>
 
 </head>
@@ -82,18 +84,20 @@
 <script type="text/javascript" src="js/jquery.jparallax.js"></script>
 <script type="text/javascript">
     jQuery(document).ready(function(){
-        jQuery("#test1 .parallax-layer").parallax({
-            mouseport: jQuery("#test1")
-        });
+        //jQuery("#test1 .parallax-layer").parallax({
+        //    mouseport: jQuery("#test1")
+        //});
         
         jQuery("#test2 .parallax-layer").parallax({
             mouseport: jQuery("#test2")
+            //xtravel: '500px',
+            //yparallax: false
         });
         
-        jQuery("#test3 .parallax-layer").parallax({
-            mouseport: jQuery("#test3"),
-            xparallax: false
-        });
+        //jQuery("#test3 .parallax-layer").parallax({
+        //    mouseport: jQuery("#test3"),
+        //    xparallax: false
+        //});
         
         jQuery("#test4 .parallax-layer").parallax({
             mouseport: jQuery("#test4"),

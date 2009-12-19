@@ -142,8 +142,8 @@ jQuery(document).ready(function(){
     </ul>  
     <p>jParallax </p>
     
-    <h3>Changes to jParallax (Beta &gt; 1.0)</h3>
-    <p>In this release I aimed to simplify jParallax for first-time users, while adding features, fixing problems, and refactoring the code for efficiency. Those who are used to the beta versions will find a few things have changed:</p>
+    <h3>Changes to jParallax (0.9.x Beta &gt; 1.0)</h3>
+    <p>In 1.0, I aimed to make jParallax more flexible, consolidate the options, add events for controlling its behaviour and refactor the code for efficiency. Those who are used to the beta versions will find a few things have changed:</p>
     <ul>
         <li><strong>Declared on layers </strong><code>.parallax()</code> is now declared on the <em>layers</em> rather than on a 'viewport' element.  You can now be more selective about which elements parallax and which do not, and you can even choose to parallax layers in different viewports at the same time. In short, it's much more flexible.  (It also saves some unnecessary mucking about finding children inside the viewport wrapper, internally.)</li>
         <li><strong>Freeze and re-position </strong>Freeze layers and send them to specific positions using the custom events <code>'freeze'</code> and <code>'unfreeze'</code>.</li>
@@ -239,8 +239,6 @@ jQuery(document).ready(function(){
 
         <dt>takeoverFactor: 0-1 <span class="default">0.66</span></dt>
         <dd>Sets the rate at which the layers 'catch up' with the mouse position. 0 is instantly, 1 is forever.</dd>
-        <dt>takeoverThresh: 0-1 <span class="default">0.002</span></dt>
-        <dd>Sets the speed and accuracy with which the layers 'catch up' with the mouse position, when it enters the mouseport from somewhere other from whence it has left. Technically, takeoverFactor is the decay of the approach curve per animation frame, where lower numbers are more decay (and therefore quicker), and takeoverThresh is the distance within which the layer position is considered to have arrived, as a ratio of the mouseport dimension. takeoverThresh is by default a five-hundredth of the mouseport - larger numbers may produce a noticeable 'jump' at the beginning of a new mouse movement.  You shouldn't need to mess with these too much, I stuck them in there because we all like tweaky-tweaky.</dd>
     </dl>
 
     <h4>Events</h4>
