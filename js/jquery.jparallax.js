@@ -23,7 +23,7 @@ var options = {
         mouseport:      jQuery(window),     // jQuery object or selector string - page element to use as mouse detector
         xparallax:      true,               // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
         yparallax:      true,               //
-        xorigin:        0.5,                // 0-1 - Sets default alignment. Only works when parallax is something other than 1 or true
+        xorigin:        0.5,                // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
         yorigin:        0.5,                //
         takeoverDecay:  0.66,               // 0-1 (0 instant, 1 forever) - Sets rate of decay curve for catching up with target mouse position
         frameDuration:  30,                 // Int (milliseconds)
