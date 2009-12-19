@@ -84,14 +84,16 @@
 <script type="text/javascript" src="js/jquery.jparallax.js"></script>
 <script type="text/javascript">
     jQuery(document).ready(function(){
-        //jQuery("#test1 .parallax-layer").parallax({
-        //    mouseport: jQuery("#test1")
-        //});
+        jQuery("#test1 .parallax-layer").parallax({
+            mouseport: jQuery("#test1")
+        },
+        {
+            xparallax: false
+        });
         
         jQuery("#test2 .parallax-layer").parallax({
-            mouseport: jQuery("#test2")
-            //xtravel: '500px',
-            //yparallax: false
+            mouseport: jQuery("#test2"),
+            xparallax: '200px'
         });
         
         //jQuery("#test3 .parallax-layer").parallax({
