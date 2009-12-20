@@ -1,5 +1,5 @@
 // jquery.jparallax.js
-// 1.0 - pre
+// 1.0 - dev
 // Stephen Band
 //
 // Project and documentation site:
@@ -45,28 +45,41 @@ var options = {
     abs = Math.abs,
     pointer = [0, 0];
 
+// FUNCTIONS
+
+function parseValue(value) { return this.lib[value]; }
+parseValue.lib = value;
+
+// Converts numbers or numbers in strings to boolean
+function parseBool(x) {
+    return typeof x === "boolean" ? x : !!( parseFloat(x) ) ;
+}
+
 // CONSTRUCTORS
 
 function Mouse(options, pointer){
-    // console.log('new Mouse(' + options + ', ' + pointer + ')');
     
-    var parallax = [!(options.xparallax === false || options.xparallax === 0),
-                    !(options.yparallax === false || options.yparallax === 0)];
+    // Convert parallax options to boolean values
+    var parallax = [ parseBool(options.xparallax), parseBool(options.yparallax) ];
     
     this.ontarget = false;
     this.decay = options.takeoverDecay;
-    this.pointer = pointer || options.pointer || [0, 0];
+    this.pointer = pointer || [0.5, 0.5];
     this.update = function(pointer, threshold){
+        
         // Pointer is already on target
         if (this.ontarget) {
             this.pointer = pointer;
         }
+        
         // Pointer has arrived within the target thresholds
         else if ( (!parallax[0] || abs(pointer[0] - this.pointer[0]) < threshold[0]) &&
                   (!parallax[1] || abs(pointer[1] - this.pointer[1]) < threshold[1]) ) {
+        
             this.ontarget = true;
             this.pointer = pointer;
         }
+        
         // Pointer is nowhere near the target
         else {
             var lagPointer = [],
@@ -81,16 +94,18 @@ function Mouse(options, pointer){
         }
     };
 }
-    
+
 function Port(object, options){
     var self = this,
-        elem = ( typeof object === 'string' ) ? jQuery(object) : object ,
+        elem = ( typeof object === 'string' ) ? jQuery(object) : object,
+        // Convert parallax options to boolean values
+        parallax = [parseBool(options.xparallax), parseBool(options.yparallax)],
+        // State of mouse position (0 - outside, 1 - inside, 2 - just gone outside)
         inside = 0,
-        parallax = [!(options.xparallax === false || options.xparallax === 0),
-                    !(options.yparallax === false || options.yparallax === 0)],
+        // Stores mouse position on mouseleave event
         leaveCoords;
     
-    this.pointer = options.pointer || [0, 0];
+    this.pointer = [0, 0];
     this.active = false;
     this.activeOutside = (options && options.activeOutside) || false;
     this.update = function(coords){
@@ -102,10 +117,13 @@ function Port(object, options){
         // Is mouse inside port?
         // Yes.
         if ( inside > 0 ) {
-            // But it just went outside, so make this the last move, use coords stored by mouseleave event
+            // But it just went outside, so make this the last move
+            // Use leaveCoords stored by mouseleave event
             if ( inside === 2 ) {
                 inside = 0;
-                if (leaveCoords) coords = leaveCoords;
+                if (leaveCoords) {
+                    coords = leaveCoords
+                };
             }
             
             while (x--) {
@@ -138,10 +156,12 @@ function Port(object, options){
         self.pos = [offset.left + left, offset.top + top];
     };
     
+    // Update mouseport dimensions on window resize
     jQuery(window)
     .bind('resize', self.updateSize)
     .bind('resize', self.updatePos);
     
+    // Detect entry and exit of mouse
     elem
     .bind('mouseenter', function(e){
         inside = 1;
@@ -151,80 +171,116 @@ function Port(object, options){
         leaveCoords = [e.pageX, e.pageY];
     });
     
+    // Set up layer
     this.updateSize();
     this.updatePos();
 }
 
 function Layer(elem, options){
-    var parallax = [],
-        px = [];
-    
-    this.offset = [0, 0];
+    var px = [],
+        parallax = [],
+        offset = [],
+        position = [];
+
     this.update = function(pointer){
         var pos = [],
-            size = this.size,
-            css = {},
-            position,
-            margin,
-            x = 2;
+            cssPosition,
+            cssMargin,
+            x = 2,
+            css = {};
         
         while (x--) {
             if ( parallax[x] ) {
-                pos[x] = parallax[x] * pointer[x] + this.offset[x];
+                pos[x] = parallax[x] * pointer[x] + offset[x];
                 
-                // Calculate css
-                position = ( px[x] ) ? undefined : pos[x] * 100 + '%' ;
-                margin = ( px[x] ) ? pos[x] * -1 + 'px' : pos[x] * size[x] * -1 + 'px' ;
+                // We're working in pixels
+                if ( px[x] ) {
+                    cssPosition = position[x];
+                    cssMargin = pos[x] * -1;
+                }
+                // We're working by ratio
+                else {
+                    cssPosition = pos[x] * 100 + '%';
+                    cssMargin = pos[x] * this.size[x] * -1;
+                }
                 
                 // Fill in css object
                 if ( x === 0 ) {
-                    css.left = position;
-                    css.marginLeft = margin;
+                    css.left = cssPosition;
+                    css.marginLeft = cssMargin;
                 }
                 else {
-                    css.top = position;
-                    css.marginTop = margin;
+                    css.top = cssPosition;
+                    css.marginTop = cssMargin;
                 }
             }
         }
         
+        // Set css
         elem.css(css);
     };
-    this.setParallax = function(x, y){
-        var p, i = 2;
+
+    this.setParallax = function(xp, yp, xo, yo){
+        var p = [ xp || options.xparallax, yp || options.yparallax ],
+            origin = [ xo || options.xorigin, yo || options.yorigin ],
+            i = 2,
+            css = {};
         
-        // Work out what units we're dealing with
         while (i--) {
-            p = arguments[i];
-        
-            parallax[i] = 
-                // Boolean true - convert to ratio 1
-                p === true ? 1 :
-                // Percentages - convert to ratio 0-1
-                regex.percent.test(p) ? parseFloat(p)/100 :
-                // Pixels
-                regex.px.test(p) ? parseInt(p) :
-                // Any other value
-                p ;
+            // Set px flag
+            px[i] = regex.px.test(p[i]);
             
-            // Set px flags
-            px[i] = regex.px.test(p);
+            // We're dealing with pixel dimensions
+            if ( px[i] ) {
+                // Set parallax
+                parallax[i] = parseInt(p[i]);
+                // Set offset
+                offset[i] = origin[i] * ( this.size[i] - parallax[i] );
+                // Set css position constant
+                position[i] = origin[i] * 100 + '%';
+            }
+            
+            // We're dealing with ratios
+            else {
+                // Set parallax, converting to ratio 0-1 where necessary
+                parallax[i] =
+                    p[i] === true ? 1 :
+                    regex.percent.test(p[i]) ? parseFloat(p[i])/100 :
+                    p[i] ;
+                // Set offset
+                offset[i] = parallax[i] ? origin[i] * ( 1 - parallax[i] ) : 0 ;
+            }
         }
-    }
+    };
+
     this.getPointer = function(){
-        // Calculates layer pointer from current position of layer
-        var vp = elem.offsetParent(),
+        var viewport = elem.offsetParent(),
             pos = elem.position(),
-            pointer = [ pos.left / (vp.outerWidth() - this.size[0]) , pos.top / (vp.outerHeight() - this.size[1]) ];
+            position = [],
+            pointer = [],
+            i = 2;
+            
+        // Reverse-engineer ratio from layer's current position
+        while (i--) {
+            if ( px[i] ) {
+                // MISSING: reverse calculation for pixel case
+            }
+            else {
+                position[i] = pos[ i === 0 ? 'left' : 'top' ] / (viewport[ i === 0 ? 'outerWidth' : 'outerHeight' ]() - this.size[i]) ;
+            }
+            
+            pointer[i] = (position[i] - offset[i]) / parallax[i] ;
+        }
         
         return pointer;
     };
-    this.updateSize = function(size){
-        this.size = size || [elem.outerWidth(), elem.outerHeight()];
+
+    this.setSize = function(x, y){
+        this.size = [ x || elem.outerWidth(), y || elem.outerHeight() ];
     };
     
-    this.updateSize(options.size);
-    this.setParallax(options.xparallax, options.yparallax);
+    this.setSize(options.width, options.height);
+    this.setParallax(options.xparallax, options.yparallax, options.xorigin, options.yorigin);
 }
 
 // EVENT HANDLERS
@@ -254,7 +310,7 @@ function update(e){
     }
     
     // Layer has it's own mouse
-    if ( localmouse !== undefined ) {
+    if ( localmouse ) {
     
         // Process mouse
         localmouse.update( local.freeze ? local.freeze.pointer : port.pointer, port.threshold );
@@ -286,10 +342,6 @@ function update(e){
     
     local.layer.update(mouse.pointer);
 }
-
-function parseValue(value) { return this.lib[value]; }
-parseValue.lib = value;
-
 
 // PLUG DEFINITION
 
@@ -334,10 +386,13 @@ jQuery.fn[plugin] = function(o){
         };
         
         // Create local mouse, passing in current pointer with options
-        local.mouse = new Mouse(global);
-        local.mouse.pointer = mouse.pointer;
-        if (decay !== undefined) local.mouse.decay = decay;
-            
+        local.mouse = new Mouse(global, mouse.pointer);
+        
+        if (decay !== undefined) {
+            local.mouse.decay = decay
+        };
+        
+        // Start animating
         elem
         .bind(frameEvent, global, update);
     })
@@ -348,16 +403,19 @@ jQuery.fn[plugin] = function(o){
             pointer;
         
         if (local.freeze) {
+            
             // Create local mouse, passing local freeze pointer with options
             pointer = local.mouse ? local.mouse.pointer : local.freeze.pointer ;
             local.mouse = new Mouse(global);
             local.mouse.pointer = pointer;
+            
+            // Override decay with decay passed as e.decay
             if (decay !== undefined) local.mouse.decay = decay;
             
             // Destroy local.freeze
             delete local.freeze;
             
-            // Animate
+            // Remove freeze class and start animating
             elem
             .removeClass(options.freezeClass)
             .bind(frameEvent, global, update);
@@ -365,11 +423,13 @@ jQuery.fn[plugin] = function(o){
     })
     .each(function(i){
         var elem = jQuery(this),
-            layerOptions = jQuery.extend({}, global, args[i+1]),
+            
+            // Construct layer options from extra arguments
+            layerOptions = args[i+1] ? jQuery.extend({}, global, args[i+1]) : global ,
             layer = new Layer(elem, layerOptions);
         
-        // Set up layer data
-        // Giving it a local mouse initialises it as an independent layer
+        // Set up layer data. Give it a local mouse 
+        // initialises it to start smoothly from current position
         elem.data(plugin, {
             layer: layer,
             mouse: new Mouse(layerOptions, layer.getPointer())
@@ -384,6 +444,7 @@ jQuery.fn[plugin].options = options;
 // RUN
 
 jQuery(document).ready(function(){
+    
     // Pick up and store mouse position on jQuery(document)
     // IE does not register mousemove on jQuery(window)
     jQuery(document)

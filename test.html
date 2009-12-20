@@ -88,18 +88,20 @@
             mouseport: jQuery("#test1")
         },
         {
-            xparallax: false
+            yparallax: false
         });
         
         jQuery("#test2 .parallax-layer").parallax({
             mouseport: jQuery("#test2"),
-            xparallax: '200px'
+            xparallax: 0.1,
+            xorigin: 0,
+            yparallax: false
         });
         
-        //jQuery("#test3 .parallax-layer").parallax({
-        //    mouseport: jQuery("#test3"),
-        //    xparallax: false
-        //});
+        jQuery("#test3 .parallax-layer").parallax({
+            mouseport: jQuery("#test3"),
+            xparallax: false
+        });
         
         jQuery("#test4 .parallax-layer").parallax({
             mouseport: jQuery("#test4"),
