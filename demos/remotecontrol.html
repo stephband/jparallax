@@ -30,6 +30,9 @@
     #viewport {
         float: left; position: relative; background: #2f3134;
         width: 60px; height: 60px; margin: 6.4em 3.2em 0 2.4em;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
     }
 
     #mouseport {
@@ -90,10 +93,10 @@
         <img src="http://webdev.stephband.info/jparallax/images/parallax_button/6.png" alt="" class="layer_6"/>
         
         <!-- Rounded corners -->
-        <div class="tl"></div>
+        <!--div class="tl"></div>
         <div class="tr"></div>
         <div class="bl"></div>
-        <div class="br"></div>
+        <div class="br"></div-->
     </div>
     
     <div id="mouseport">
@@ -110,15 +113,14 @@
 jQuery(document).ready(function(){
     
     // Set up parallax layers
-    jQuery("#viewport>img")
-    .parallax(
-        { mouseport: jQuery("#mouseport") },
-        { xtravel: '6px',    ytravel: '6px' },  // Layer 1
-        { xtravel: '12px',   ytravel: '12px' }, // Layer 2
-        { xtravel: '30px',   ytravel: '30px' }, // Layer 3
-        { xtravel: '54px',   ytravel: '54px' }, // Layer 4
-        { xtravel: '84px',   ytravel: '84px' }, // Layer 5
-        { xtravel: '120px',  ytravel: '120px' } // Layer 6
+    jQuery("#viewport>img").parallax(
+        { mouseport: jQuery("#mouseport") },            // Options
+        { xparallax: '6px',    yparallax: '6px' },      // Layer 1
+        { xparallax: '12px',   yparallax: '12px' },     // Layer 2
+        { xparallax: '30px',   yparallax: '30px' },     // Layer 3
+        { xparallax: '54px',   yparallax: '54px' },     // Layer 4
+        { xparallax: '84px',   yparallax: '84px' },     // Layer 5
+        { xparallax: '120px',  yparallax: '120px' }     // Layer 6
     );
     
 });

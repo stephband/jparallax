@@ -24,6 +24,9 @@
         position:relative;
         width:60px; height:60px;
         margin:3.2em 3.2em 0 0;
+        -webkit-border-radius: 12px;
+        -moz-border-radius: 12px;
+        border-radius: 12px;
     }
     
     .layer_1 { position: absolute; width:45px; height:45px; z-index:101; }
@@ -44,8 +47,6 @@
 
 </style>
 
-<!-- Make IE recognise HTML5 elements (for styling - must stay in the head, before elements are used) -->
-<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 <!-- IE only CSS -->
 <!--[if lt IE 8]><style type="text/css"> @import "css/style_ie.css"; </style><![endif]-->
 <!-- Disable image toolbar in IE6 -->
@@ -432,12 +433,6 @@
 <script type="text/javascript" src="../js/jquery.jparallax.js"></script>
 <script type="text/javascript">
 
-var corners = 
-        '<div class="tl" />'+
-        '<div class="tr" />'+
-        '<div class="bl" />'+
-        '<div class="br" />';
-
 jQuery(document).ready(function(){
 
     // Set up each parallax instance seperately, because they
@@ -447,23 +442,21 @@ jQuery(document).ready(function(){
         
         jQuery('img', this)
         .parallax(
-            { mouseport: jQuery(this) },
-            { xtravel: '6px',    ytravel: '6px' },  // Layer 1
-            { xtravel: '12px',   ytravel: '12px' }, // Layer 2
-            { xtravel: '30px',   ytravel: '30px' }, // Layer 3
-            { xtravel: '54px',   ytravel: '54px' }, // Layer 4
-            { xtravel: '84px',   ytravel: '84px' }, // Layer 5
-            { xtravel: '120px',  ytravel: '120px' } // Layer 6
+            { mouseport: jQuery(this) },                    // Options
+            { xparallax: '6px',    yparallax: '6px' },      // Layer 1
+            { xparallax: '12px',   yparallax: '12px' },     // Layer 2
+            { xparallax: '30px',   yparallax: '30px' },     // Layer 3
+            { xparallax: '54px',   yparallax: '54px' },     // Layer 4
+            { xparallax: '84px',   yparallax: '84px' },     // Layer 5
+            { xparallax: '120px',  yparallax: '120px' }     // Layer 6
         )
         .click( function() {
             console.log('remove');
             jQuery(this).remove();
         });
     
-    })
-    // Add rounded corners
-    .prepend( corners );
-    
+    });
+
 });
 
 </script>

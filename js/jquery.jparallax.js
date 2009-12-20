@@ -234,19 +234,22 @@ function Layer(elem, options){
             if ( px[i] ) {
                 // Set parallax
                 parallax[i] = parseInt(p[i]);
+                
                 // Set offset
                 offset[i] = origin[i] * ( this.size[i] - parallax[i] );
+                
                 // Set css position constant
                 position[i] = origin[i] * 100 + '%';
             }
             
             // We're dealing with ratios
             else {
-                // Set parallax, converting to ratio 0-1 where necessary
+                // Set parallax, converting to ratio where necessary
                 parallax[i] =
                     p[i] === true ? 1 :
                     regex.percent.test(p[i]) ? parseFloat(p[i])/100 :
                     p[i] ;
+                
                 // Set offset
                 offset[i] = parallax[i] ? origin[i] * ( 1 - parallax[i] ) : 0 ;
             }
@@ -264,6 +267,7 @@ function Layer(elem, options){
         while (i--) {
             if ( px[i] ) {
                 // MISSING: reverse calculation for pixel case
+                position[i] = 0;
             }
             else {
                 position[i] = pos[ i === 0 ? 'left' : 'top' ] / (viewport[ i === 0 ? 'outerWidth' : 'outerHeight' ]() - this.size[i]) ;
@@ -318,10 +322,9 @@ function update(e){
         // If it hits target
         if ( localmouse.ontarget ) {
             
-            // Destroy it
             delete local.mouse;
     
-            // And stop animating frozen layers
+            // Stop animating frozen layers
             if (local.freeze) {
                 elem
                 .unbind(frameEvent)
