@@ -20,7 +20,7 @@ var plugin = "parallax";
 // VAR
 
 var options = {
-        mouseport:      jQuery(window),     // jQuery object or selector string - page element to use as mouse detector
+        mouseport:      'body',             // jQuery object or selector string - page element to use as mouse detector
         xparallax:      true,               // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
         yparallax:      true,               //
         xorigin:        0.5,                // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')

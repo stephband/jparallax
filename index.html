@@ -14,6 +14,7 @@
   @import "http://webdev.stephband.info/css/reset.css";
   @import "http://webdev.stephband.info/css/typography.css";
   @import "http://webdev.stephband.info/css/style_light.css";
+  @import "css/jparallax.css";
   
   #parallax
     {position:relative; overflow:hidden; width:60em; height:20em;}
@@ -44,74 +45,6 @@
     {color:	#7d4819;}  
 
 </style>
-
-<script type="text/javascript" src="../js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="js/jquery.jparallax.js"></script>
-<script type="text/javascript" src="../js/email.js"></script>
-<script type="text/javascript">
-<!--
-    
-    // jQuery.noConflict();
-    
-    // VAR
-    
-    var inPullNav = false;
-    
-    // RUN
-    
-    var corners = '<img src="http://webdev.stephband.info/images/corner_white_tl.png" class="tl" />'+
-        '<img src="http://webdev.stephband.info/images/corner_white_tr.png" class="tr" />'+
-        '<img src="http://webdev.stephband.info/images/corner_white_bl.png" class="bl" />'+
-        '<img src="http://webdev.stephband.info/images/corner_white_br.png" class="br" />';
-    
-jQuery(document).ready(function(){
-  
-    jQuery('h1').html('<img src="http://webdev.stephband.info/images/logo_stephband_medcoalblue.png" />');
-  
-  	jQuery('#parallax').jparallax({}).append(corners);
-  	
-  	jQuery('#beer').click(function(){
-      jQuery('#housing').animate({height: "3em"}, 120).children('#donate').show().siblings().hide();
-    });
-    
-  	jQuery('#contact').click(function(){
-      jQuery('#housing').animate({height: 140}, 120).children('#message').show().siblings().hide();
-    });
-    
-    jQuery('#pullnav input, #pullnav textarea').focus(function(){inPullNav = true;}).blur(function(){inPullNav = false;});
-    
-    jQuery('#pullnav').hover(function(){}, function(){
-        if (!inPullNav) {
-        jQuery('#housing').animate({height: 0}, 500).children().hide();
-        }
-    });
-    
-    jQuery('#contact').hover(
-      function(){
-        jQuery('#contact img').attr({src: "../images/icon_letter_on.png"});
-      },
-      function(){
-        jQuery('#contact img').attr({src: "../images/icon_letter.png"});
-      }
-    );
-    
-    jQuery('#beer').hover(
-      function(){
-        jQuery('#beer img').attr({src: "../images/icon_beer_on.png"});
-      },
-      function(){
-        jQuery('#beer img').attr({src: "../images/icon_beer.png"});
-      }
-    );
-    
-    jQuery('body').click(function(){
-      //jQuery('#donate').hide();
-    });
-  	
-  });
-
-//-->
-</script>
 
 <!--[if lt IE 7]>
 <script type="text/javascript" src="js/jquery.ifixpng.js"></script>
@@ -173,20 +106,28 @@ jQuery(document).ready(function(){
   
   <p>Here's a demonstration with some images:</p>
   
-  <div id="parallax" class="clear">
-  	<div style="width:860px; height:273px;">
-  		<img src="http://webdev.stephband.info/jparallax/images/parallax_sketch/0_sun.png" alt="" style="position:absolute;left:300px;top:-12px;"/>
-  	</div>
-  	<div style="width:920px; height:274px;">
-  		<img src="http://webdev.stephband.info/jparallax/images/parallax_sketch/1_mountains.png" alt="" />
-  	</div>
-  	<div style="width:1100px; height:284px;">
-  		<img src="http://webdev.stephband.info/jparallax/images/parallax_sketch/2_hill.png" alt="" style="position:absolute; top:40px; left:0;" />
-  	</div>
-  	<div style="width:1360px; height:320px;">
-  		<img src="http://webdev.stephband.info/jparallax/images/parallax_sketch/3_wood.png" alt="" style="position:absolute; top:96px; left:0;"/>
-  	</div>
-  </div>
+    <div id="parallax" class="clear">
+        
+        <!-- parallax layers -->
+        <div class="parallax-layer" style="width:860px; height:273px;">
+            <img src="http://webdev.stephband.info/jparallax/images/parallax_sketch/0_sun.png" alt="" style="position:absolute; left:300px; top:-12px;"/>
+        </div>
+        <div class="parallax-layer" style="width:920px; height:274px;">
+            <img src="http://webdev.stephband.info/jparallax/images/parallax_sketch/1_mountains.png" alt="" />
+        </div>
+        <div class="parallax-layer" style="width:1100px; height:284px;">
+            <img src="http://webdev.stephband.info/jparallax/images/parallax_sketch/2_hill.png" alt="" style="position:absolute; top:40px; left:0;" />
+        </div>
+        <div class="parallax-layer" style="width:1360px; height:320px;">
+            <img src="http://webdev.stephband.info/jparallax/images/parallax_sketch/3_wood.png" alt="" style="position:absolute; top:96px; left:0;"/>
+        </div>
+        
+        <!-- Rounded corners -->
+        <img src="http://webdev.stephband.info/images/corner_white_tl.png" class="tl" />
+        <img src="http://webdev.stephband.info/images/corner_white_tr.png" class="tr" />
+        <img src="http://webdev.stephband.info/images/corner_white_bl.png" class="bl" />
+        <img src="http://webdev.stephband.info/images/corner_white_br.png" class="br" />
+    </div>
   
   <p>But that's not all that jParallax does, because parallaxed layers also react to events that allow them to be frozen and re-positioned wherever you like.</p>
   
@@ -227,7 +168,7 @@ jQuery(document).ready(function(){
         <dd>Enables mouse response <em>outside</em> the limits of the mouseport. Layers behave as if the mouse was at the edge of the mouseport.</dd>
 
         <dt>frameDuration: milliseconds <span class="default">25</span></dt>
-        <dd>Length of time between animation frames. With a lot of big layers, you may want to increase the frame duration to save CPU. About 50 is acceptable (20 frames/second), but I like it zippy. Modern browsers such as <a href="http://www.google.com/chrome/" />Google Chrome</a> have accurate timing, but many older browsers choke below about 15ms.</dd>
+        <dd>Length of time between animation frames. With a lot of big layers, you may want to increase the frame duration to save CPU. About 50 is acceptable (20 frames/second), but I like it zippy. Modern browsers such as <a href="http://www.google.com/chrome/">Google Chrome</a> have accurate timing, but many older browsers choke below about 15ms.</dd>
 
         <dt>xtravel: '<em>n</em>px' | '<em>n</em>%' | 0-1 <span class="default">1</span></dt>
         <dt>ytravel: '<em>n</em>px' | '<em>n</em>%' | 0-1 <span class="default">1</span></dt>
@@ -440,14 +381,67 @@ jQuery(document).ready(function(){
 
 </div>
 
+<script type="text/javascript" src="js/jquery-nightly.js"></script>
+<script type="text/javascript" src="http://webdev.stephband.info/events/frame/js/jquery.event.frame.js"></script>
+<script type="text/javascript" src="js/jquery.jparallax.js"></script>
+<!--script type="text/javascript" src="../js/email.js"></script-->
 <script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+
+var inPullNav = false;
+    
+jQuery(document).ready(function(){
+  
+    //jQuery('h1').html('<img src="http://webdev.stephband.info/images/logo_stephband_medcoalblue.png" />');
+  
+  	jQuery('#parallax>.parallax-layer')
+  	.parallax({
+        mouseport: jQuery('#parallax')
+  	});
+  	
+/*
+  	jQuery('#beer').click(function(){
+      jQuery('#housing').animate({height: "3em"}, 120).children('#donate').show().siblings().hide();
+    });
+    
+  	jQuery('#contact').click(function(){
+      jQuery('#housing').animate({height: 140}, 120).children('#message').show().siblings().hide();
+    });
+    
+    jQuery('#pullnav input, #pullnav textarea').focus(function(){inPullNav = true;}).blur(function(){inPullNav = false;});
+    
+    jQuery('#pullnav').hover(function(){}, function(){
+        if (!inPullNav) {
+        jQuery('#housing').animate({height: 0}, 500).children().hide();
+        }
+    });
+    
+    jQuery('#contact').hover(
+      function(){
+        jQuery('#contact img').attr({src: "../images/icon_letter_on.png"});
+      },
+      function(){
+        jQuery('#contact img').attr({src: "../images/icon_letter.png"});
+      }
+    );
+    
+    jQuery('#beer').hover(
+      function(){
+        jQuery('#beer img').attr({src: "../images/icon_beer_on.png"});
+      },
+      function(){
+        jQuery('#beer img').attr({src: "../images/icon_beer.png"});
+      }
+    );
+    
+    jQuery('body').click(function(){
+      //jQuery('#donate').hide();
+    });
+*/
+  	
+});
+
 </script>
-<script type="text/javascript">
-var pageTracker = _gat._getTracker("UA-5654672-1");
-pageTracker._trackPageview();
-</script>
+
 
 </body>
 </html>
