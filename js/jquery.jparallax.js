@@ -20,7 +20,7 @@ var plugin = "parallax";
 // VAR
 
 var options = {
-        mouseport:      'body',             // jQuery object or selector string - page element to use as mouse detector
+        mouseport:      document,           // jQuery object or selector - DOM Element to use as mouse detector
         xparallax:      true,               // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
         yparallax:      true,               //
         xorigin:        0.5,                // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
@@ -97,7 +97,7 @@ function Mouse(options, pointer){
 
 function Port(object, options){
     var self = this,
-        elem = ( typeof object === 'string' ) ? jQuery(object) : object,
+        elem = object instanceof jQuery ? object : jQuery(object) ,
         // Convert parallax options to boolean values
         parallax = [parseBool(options.xparallax), parseBool(options.yparallax)],
         // State of mouse position (0 - outside, 1 - inside, 2 - just gone outside)
