@@ -25,7 +25,7 @@ var options = {
         yparallax:      true,               //
         xorigin:        0.5,                // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
         yorigin:        0.5,                //
-        takeoverDecay:  0.66,               // 0-1 (0 instant, 1 forever) - Sets rate of decay curve for catching up with target mouse position
+        decay:          0.66,               // 0-1 (0 instant, 1 forever) - Sets rate of decay curve for catching up with target mouse position
         frameDuration:  30,                 // Int (milliseconds)
         freezeClass:    'freeze'            // String - Class added to layer when frozen
     },
@@ -63,7 +63,7 @@ function Mouse(options, pointer){
     var parallax = [ parseBool(options.xparallax), parseBool(options.yparallax) ];
     
     this.ontarget = false;
-    this.decay = options.takeoverDecay;
+    this.decay = options.decay;
     this.pointer = pointer || [0.5, 0.5];
     this.update = function(pointer, threshold){
         
@@ -230,6 +230,13 @@ function Layer(elem, options){
             // Set px flag
             px[i] = regex.px.test(p[i]);
             
+            // Convert origin to numbers
+            if (typeof origin[i] === 'string') {
+                origin[i] = regex.percent.test(origin[i]) ?
+                    parseFloat(origin[i])/100 :
+                    value[ origin[i] ] || 1 ;
+            }
+            
             // We're dealing with pixel dimensions
             if ( px[i] ) {
                 // Set parallax
@@ -266,7 +273,7 @@ function Layer(elem, options){
         // Reverse-engineer ratio from layer's current position
         while (i--) {
             if ( px[i] ) {
-                // MISSING: reverse calculation for pixel case
+                // TODO: reverse calculation for pixel case
                 position[i] = 0;
             }
             else {

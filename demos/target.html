@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    
+    <title>webdev.stephband.info</title>
+    
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+    
+    <style type="text/css" media="screen, projection">
+    
+        @import "http://webdev.stephband.info/css/reset.css";
+        @import "http://webdev.stephband.info/css/typography.css";
+        @import "http://webdev.stephband.info/css/style_dark.css";
+    
+        .parallax-port {
+            position: absolute;
+            top:172px; bottom:80px; left:80px; right:80px;
+            background: #eeeeee; overflow: hidden;
+            border-radius: 12px; -webkit-border-radius: 12px; -moz-border-radius: 12px;
+        }
+        .parallax-layer {
+            position: absolute;
+        }
+    
+    </style>
+</head>
+
+<body>
+
+    <div id="header">
+        <a href="../index.html"><h1>webdev.stephband.info</h1></a>
+    </div>
+    
+    <div id="content">
+        <h2>jParallax Demos <a href="index.html">next</a></h2>
+    </div>
+    
+    <div id="target" class="parallax-port">
+        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_blue.png" alt="" />
+        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_green.png" alt="" />
+        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_red.png" alt="" />
+    </div>
+
+    <script type="text/javascript" src="../js/jquery-nightly.js"></script>
+    <script type="text/javascript" src="http://webdev.stephband.info/events/frame/js/jquery.event.frame.js"></script>
+    <script type="text/javascript" src="../js/jquery.jparallax.js"></script>
+    <script type="text/javascript">
+    
+        jQuery(document).ready(function(){
+            var target = jQuery("#target");
+            
+            target
+            .children('img')
+            .parallax(
+                { mouseport: target },
+                { xparallax: 0.2, yparallax: 0.2 },     // Blue layer options
+                { xparallax: 0.6, yparallax: 0.6 },     // Green layer options
+                {}                                      // Red layer options
+            );
+        });
+    
+    </script>
+    
+    <!--[if lt IE 7]>
+    <script type="text/javascript" src="js/jquery.ifixpng.js"></script>
+    <script type="text/javascript">jQuery(document).ready(function(){ jQuery('img[@src$=.png]').ifixpng(); });</script>
+    <![endif]-->
+
+</body>
+</html>
