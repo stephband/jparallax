@@ -43,30 +43,29 @@
         <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_red.png" alt="" />
     </div>
 
-    <script type="text/javascript" src="../js/jquery-nightly.js"></script>
-    <script type="text/javascript" src="http://webdev.stephband.info/events/frame/js/jquery.event.frame.js"></script>
-    <script type="text/javascript" src="../js/jquery.jparallax.js"></script>
-    <script type="text/javascript">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.jparallax.min.js"></script>
+<script type="text/javascript">
     
-        jQuery(document).ready(function(){
-            var target = jQuery("#target");
-            
-            target
-            .children('img')
-            .parallax(
-                { mouseport: target },
-                { xparallax: 0.2, yparallax: 0.2 },     // Blue layer options
-                { xparallax: 0.6, yparallax: 0.6 },     // Green layer options
-                {}                                      // Red layer options
-            );
-        });
-    
-    </script>
-    
-    <!--[if lt IE 7]>
-    <script type="text/javascript" src="js/jquery.ifixpng.js"></script>
-    <script type="text/javascript">jQuery(document).ready(function(){ jQuery('img[@src$=.png]').ifixpng(); });</script>
-    <![endif]-->
+    jQuery(document).ready(function(){
+        var target = jQuery("#target");
+        
+        target
+        .children('img')
+        .parallax(
+            { mouseport: target },
+            { xparallax: 0.2, yparallax: 0.2 },     // Blue layer options
+            { xparallax: 0.6, yparallax: 0.6 },     // Green layer options
+            {}                                      // Red layer options
+        );
+    });
+
+</script>
+
+<!--[if lt IE 7]>
+<script type="text/javascript" src="js/jquery.ifixpng.js"></script>
+<script type="text/javascript">jQuery(document).ready(function(){ jQuery('img[@src$=.png]').ifixpng(); });</script>
+<![endif]-->
 
 </body>
 </html>
