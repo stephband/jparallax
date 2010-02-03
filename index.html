@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
@@ -16,12 +16,19 @@
   @import "http://webdev.stephband.info/css/style_light.css";
   @import "css/jparallax.css";
   
+  h1 {
+    width: 532px; height: 0;
+    overflow: hidden;
+    padding-top: 78px;
+    background: url('http://webdev.stephband.info/images/logo_stephband_medcoalblue.png') no-repeat;
+  }
+  
   #parallax
     {position:relative; overflow:hidden; width:60em; height:20em;}
     
   #pullnav
     {position: absolute; top:0; left:648px; width:240px; padding-left:18px; padding-right:18px; padding-top:12px; padding-bottom:10px;
-     background: url('../images/bg_pulldown.png') bottom;}
+     background: url('http://webdev.stephband.info/images/bg_pulldown.png') bottom;}
   #housing
     /*{height:0px;}*/
   #contact
@@ -44,17 +51,57 @@
   #pullnav .error
     {color:	#7d4819;}  
 
-</style>
+input[type='text'] {
+    margin-left: 0;
+}
+input[type='text'], textarea {
+    border: 1px solid #333333;
+    padding: 0.3em;
+    -webkit-border-radius: 0.6em;
+    -moz-border-radius:    0.6em;
+    border-radius:         0.6em;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+ }
 
-<!--[if lt IE 7]>
-<script type="text/javascript" src="js/jquery.ifixpng.js"></script>
-<script type="text/javascript">jQuery(document).ready(function(){ jQuery('img[@src$=.png]').ifixpng(); });</script>
-<![endif]-->
-<!--[if lt IE 8]>
-<style type="text/css">
-@import "css/style_ie.css";
+.options {
+    margin-top: 1em;
+}
+.options td {
+        vertical-align: top;
+        padding: 0 0.4em;
+    }
+.options thead td {
+        background: #e8ecf0;
+        border-bottom: 1em solid white;
+        padding: 0.2em 0.4em;
+    }
+pre {
+    font-family: Courier, 'Monaco', 'Andale Mono';
+}
+  .options .key,
+  .options .value,
+  .options .default {
+    font-family: Courier, 'Monaco', 'Andale Mono';
+    padding-right: 1em;
+    font-weight: bold;
+  }
+  .options .default {
+    width: 12em;
+  }
+  .options .note {
+    padding-bottom: 1em;
+  }
+#housing {
+padding-top: 16px;
+}
+
+small {
+    text-transform: uppercase;
+}
+
 </style>
-<![endif]-->
 
 </head>
 
@@ -70,10 +117,10 @@
     
     <h3>Download</h3>
     <ul>
-        <li><a href="js/jquery.parallax.js">jquery.parallax.js</a> 13KB | 5KB MINIFIED | 2KB GZIPPED</li>
-        <li><a href="http://webdev.stephband.info/jparallax/js/jquery.parallax-1.0.js">jquery.jparallax.js</a> [11k] 1.0</li>
+        <li><a href="js/jquery.parallax.js">jquery.parallax.min.js</a> <small>5KB MINIFIED | 2KB GZIPPED</small></li>
+        <li><a href="http://github.com/stephband/jparallax/downloads">github.com/stephband/jparallax/downloads</a> <small>Zip | source, documentation and demos</small></li>
     </ul>
-    <p>jParallax's options have changed in version 1.0. If you are already familiar with jParallax, please read the <a href="changelog.html">changelog</a> for an overview.</p>
+    <p>Note: jParallax 1.0 is not a drop-in replacement for jParallax 0.9.x. If you are already using the beta and want to switch, please read the <a href="changelog.html">changelog</a> for an overview.</p>
 
   <h3>Instantiation</h3>
   <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#003369;">jQuery</span>( <span style="color:#760f15;">'.parallax-layer'</span> ).<span style="color:#003369;">parallax</span>( options );</pre>
@@ -85,12 +132,12 @@
   <p>With a bit of CSS you can either set up windows to see these layers through, or leave them free to roam about.</p>
   <p>The diagram on the right illustrates what jParallax does to the html:</p>
   
-<pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#881280;">&lt;ul </span><span style="color:#994500;">id</span><span style="color:#881280;">=</span><span style="color:#1a1aa6;">&quot;parallax&quot;</span><span style="color:#881280;">&gt;</span>
-  <span style="color:#881280;">&lt;li&gt;&lt;/li&gt;</span>
-  <span style="color:#881280;">&lt;li&gt;&lt;/li&gt;</span>
+<pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#881280;">&lt;ul</span><span style="color:#881280;">&gt;</span>
+  <span style="color:#881280;">&lt;li <span style="color:#994500;">class</span><span style="color:#881280;">=</span><span style="color:#1a1aa6;">&quot;parallax-layer&quot;</span>&gt;&lt;/li&gt;</span>
+  <span style="color:#881280;">&lt;li <span style="color:#994500;">class</span><span style="color:#881280;">=</span><span style="color:#1a1aa6;">&quot;parallax-layer&quot;</span>&gt;&lt;/li&gt;</span>
 <span style="color:#881280;">&lt;/ul&gt;</span></pre>
   
-  <p>Here's a demonstration with some images:</p>
+  <p>and here's a demonstration with some images:</p>
   
     <div id="parallax" class="clear">
         
@@ -115,113 +162,150 @@
         <img src="http://webdev.stephband.info/images/corner_white_br.png" class="br" />
     </div>
   
-  <p>jParallax also provides options and event bindings that give you control over a layer's behaviour.</p>
+  <p>jParallax also provides options and event bindings that give you control over a layer's behaviour. We all like tweaky-tweaky.</p>
   
   <h3>More demos</h3>
   <ul>
-    <li><a href="http://webdev.stephband.info/jparallax/demos">webdev.stephband.info/jparallax/demo.html</a></li>
-    <li><a href="http://webdev.stephband.info/jparallax/demos_stalkbuttons.html">webdev.stephband.info/parallax_demos_stalkbuttons.html</a> - demonstrates multiple parallaxed elements per page.</li>
-    <li><a href="http://webdev.stephband.info/jparallax/demos_stalkremote.html">webdev.stephband.info/parallax_demos_stalkremote.html</a> - shows parallax by 'remote control'.</li>
-    <li><a href="http://webdev.stephband.info/jparallax/demos_type.html">webdev.stephband.info/parallax_demos_type.html</a> - shows how content inside layers can be linked to.</li>
-    <li><a href="http://webdev.stephband.info/jparallax/demos_target.html">webdev.stephband.info/parallax_demos_target.html</a> - demonstrates window resizing.</li>
+    <li><a href="demos/index.html">demos/index.html</a></li>
+    <li><a href="demos/stalkbuttons.html">demos/stalkbuttons.html</a> - multiple parallax.</li>
+    <li><a href="demos/remotecontrol.html">demos/remotecontrol.html</a> - parallax by remote control.</li>
+    <li><a href="demos/thumbnails.html">demos/thumbnails.html</a> - beautiful interactive thumbnails.</li>
+    <li><a href="demos/target.html">demos/target.html</a> - demonstrates how smoothly jParallax handles window resizing.</li>
   </ul>
   
   <h3>Using jParallax</h3>
-  <p>The default behaviour of jParallax is to show the whole width of a layer in response to the mouse travelling the whole width of the mouseport. When the mouse is moved to the extreme left-hand side of the mouseport the left-hand side of the layer meets it, and when the mouse is moved to the extreme right-hand side of the mouseport the right-hand side of the layer arrives at the right hand-side of its viewport.</p>
-  <p>The simplest way to use jParallax is to make the layers different sizes using CSS.  Bigger layers move faster (and thus appear closer), and unless a layer is smaller than the viewport, its edges are never seen. The <a href="demos/">Colour Drops Demo</a> is made in exactly this way, with jParallax in its default state, and the 'speed' of the layers controlled simply by making the images different sizes. No options are passed in.</p>
-  <p>However, we all want tweaky-tweaky.  I give you tweaky-tweaky...</p>
+  <p>The default behaviour of jParallax is to show the whole width of a layer in response to the mouse travelling the whole width of the mouseport. When the mouse is moved to the extreme left-hand side of the mouseport the left-hand side of the layer meets the left-hand side of its viewport, and when the mouse is moved to the extreme right-hand side of the mouseport the right-hand side of the layer arrives at the right hand-side of its viewport.</p>
+  <p>Therefore, the simplest way to use jParallax is to make the layers different sizes using CSS.  Bigger layers move faster (and thus appear closer), and unless a layer is smaller than the viewport, its edges are never seen. The <a href="demos/index.html">Colour Drops Demo</a> is made in exactly this way, with jParallax in its default state, and the 'speed' of the layers controlled simply by making the images different sizes. No options are passed in.</p>
   
-  <h4>The CSS</h4>
-  <p>There are a few ways to effectively style jParallax.  The classic is the 'window', or 'viewport', like in the example above. To see layers through a viewport, wrap them in a container with a style similar to:</p>
+  <h3>CSS</h3>
+  <p>There are various ways to style jParallax effectively. The classic approach is the 'viewport' effect, as in the example above. To see layers through a viewport, wrap them in a container with a style similar to:</p>
   <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;">.parallax-viewport
     { <span style="color:#88134f;">position</span>:<span style="color:#9b4400;">relative</span>; <span style="color:#88134f;">overflow</span>:<span style="color:#9b4400;">hidden</span>; <span style="color:#88134f;">width</span>:<span style="color:#0000ff;"><em>n</em>px</span>; <span style="color:#88134f;">height</span>:<span style="color:#0000ff;"><em>n</em>px</span>; }</pre>
-  <p>The <code>position</code> declaration sets up the viewport as an offset parent for the layers, while <code>overflow:hidden;</code> stops them being visible outside its boundaries.  In order for the layers to move over one another, they must be given:</p>
+  <p>The <code>position</code> declaration sets up the viewport as an offset parent for the layers, while <code>overflow:hidden;</code> stops them being visible outside its boundaries.  In order for the layers to respond, they must be given:</p>
   <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;">.parallax-layer
     { <span style="color:#88134f;">position</span>:<span style="color:#9b4400;">absolute</span>; }</pre>
-<p>There is a basic stylesheet included with the download.</p>
+<p>There is a basic stylesheet included with the download that provides these classes, and the <a href="demos/index.html">demos</a> are a good reference for some other effects you can achieve.</p>
 
-  
-  <h4>Options <span class="default">default values</span></h4>
-  <p>The following options can be passed to jParallax to set its behaviour:</p>
-    <dl class="options">
-        <dt>mouseport: jQuery object or selector string <span class="default">jQuery(document)</span></dt>
-        <dd>Specifies the DOM node to track the mouse in.</dd>
-        <dt>xparallax</dt><dd>boolean | 0-1 | '<em>n</em>%' | '<em>n</em>px'</dd><dd class="default">true</dd>
-        <dt>yparallax</dt><dd>boolean | 0-1 | '<em>n</em>%' | '<em>n</em>px'</dd><dd class="default">true</dd>
-        <dd class="notes">Set to true or false to enable or disable movement. Alternatively, to control the range over which a layer travels, either pass in an absolute value in pixels, or a scaling factor in the range 0-1 (scaling factors can also be expressed as percentage strings).  Scaling factors outside this range are also accepted, but be aware that factors below 0 (or '0%') will reverse the direction of travel, and greater than 1 (or '100%') will make layer edges appear inside the extremes of the viewport.</dd>
-        <dt>xorigin</dt><dd>0-1 | '<em>n</em>%' | 'left', 'center', 'middle', 'right'</dd><dd class="default">0.5</span></dd>
-        <dt>yorigin</dt><dd>0-1 | '<em>n</em>%' | 'top', 'center', 'middle'. 'bottom'</dd><dd class="default">0.5</span></dd>
-        <dd>Only meaningful when xparallax or yparallax are not 1. Determines which point of the layer lines up with which point of the viewport when the mouse is at that point in the mouseport. Got that?<br /><br />It's easy really.  It's the same behaviour as the css property <code>background-position</code>. If xorigin is set to <strong>0</strong> (or <strong>'left'</strong>), then when the mouse is moved to the left hand side of the mouseport the left hand side of the layer arrives at the left hand side of the viewport.  If it's set to <strong>0.5</strong> (or <strong>'center'</strong>), then when the mouse is at the centre of the mouseport the centre of the layer is aligned with the centre of the viewport.  And similarly with <strong>1</strong> (or <strong>'right'</strong>).<br /><br />
-Numbers outside the range 0-1 may also be used.</dd>
-    <dt>width: integer <span class="default">undefined</span></dt>
-    <dt>height: integer <span class="default">undefined</span></dt>
-    <dd>Values for layer dimensions, normally read from css, can be overridden. This does NOT change the css, only jParallax's idea of how big a layer is. This can be very useful in cases where you want to be able to 'click through' the upper layers.  Typically you make layers very small in css, but tell jParallax they are big via width and height. You prabably want overflow: visible on those layers, too.</dd>        
-        <dt>decay</dt><dd>0-1</dd><dd class="default">0.66</dd>
-        <dd class="notes">Sets the rate at which the layers 'catch up' with the mouse position. 0 is instantly, 1 is forever.</dd>
-        <dt>frameDuration: milliseconds <span class="default">30</span></dt>
-        <dd>Length of time between animation frames. With a lot of big layers, you may want to increase the frame duration to save CPU. About 50 is acceptable (20 frames/second), but I like it zippy. Modern browsers like <a href="http://www.google.com/chrome/">Google Chrome</a> have really accurate timing, but many older browsers choke below about 15ms.</dd>
-        <dt>freezeClass</dt><dd class="default">'freeze'</dd><dd class="notes">Class set on a layer when it is frozen.</dd>
+<h3>Options</h3>
+<table class="options">
+    <thead>
+        <tr>
+            <td>Option</td><td>Type</td><td>Default</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2" class="key">mouseport</td><td class="value">selector string | jQuery object</td><td class="default">jQuery(document)</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="note">Identifies DOM node to track the mouse in.</td>
+        </tr>
+        <tr>
+            <td class="key">xparallax</td><td class="value">boolean | 0-1 | '<em>n</em>%' | '<em>n</em>px'</td><td class="default">true</td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="key">yparallax</td><td class="value">boolean | 0-1 | '<em>n</em>%' | '<em>n</em>px'</td><td class="default">true</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="note">Set to true or false to enable or disable movement. Alternatively, to control the range over which a layer travels, either pass in an absolute value in pixels, or a scaling factor in the range 0-1 (scaling factors can also be expressed as percentage strings).  Scaling factors outside this range are also accepted, but be aware that factors below 0 (or '0%') will reverse the direction of travel, and greater than 1 (or '100%') will make layer edges appear inside the extremes of the viewport.</td>
+        </tr>
+        <tr>
+            <td class="key">xorigin</td><td class="value">0-1 | '<em>n</em>%' | 'left', 'center', 'middle', 'right'</td><td class="default">0.5</td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="key">yorigin</td><td class="value">0-1 | '<em>n</em>%' | 'top', 'center', 'middle'. 'bottom'</td><td class="default">0.5</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="note">Only meaningful when xparallax or yparallax are not 1. Determines which point of the layer lines up with which point of the viewport when the mouse is at that point in the mouseport. Got that?<br /><br />It's easy really.  It's the same behaviour as the css property <code>background-position</code>. If xorigin is set to <strong>0</strong> (or <strong>'left'</strong>), then when the mouse is moved to the left hand side of the mouseport the left hand side of the layer arrives at the left hand side of the viewport.  If it's set to <strong>0.5</strong> (or <strong>'center'</strong>), then when the mouse is at the centre of the mouseport the centre of the layer is aligned with the centre of the viewport.  And similarly with <strong>1</strong> (or <strong>'right'</strong>).<br /><br />
+Numbers outside the range 0-1 may also be used.</td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="key">freezeClass</td><td class="value">string</td><td class="default">'freeze'</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="note">Class set on a layer when it is frozen.</td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="key">decay</td><td class="value">0-1</td><td class="default">0.66</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="note">Sets the rate at which the layers 'catch up' with the mouse position. 0 is instantly, 1 is forever.</td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="key">frameDuration</td><td class="value">int (milliseconds)</td><td class="default">30</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="note">Length of time between animation frames. With a lot of big layers, you may want to increase the frame duration to save CPU. About 50 is acceptable (20 frames/second), but I like it zippy. Modern browsers like <a href="http://www.google.com/chrome/">Google Chrome</a> have really accurate timing, but many older browsers choke below about 15ms.</td>
+        </tr>
+        <tr>
+            <td class="key">width</td><td class="value">int (px)</td><td class="default">undefined</td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="key">height</td><td class="value">int (px)</td><td class="default">undefined</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="note">Values for layer dimensions, normally read from css, can be overridden. This does NOT change the css, only jParallax's idea of how big a layer is. This can be very useful in cases where you want to be able to 'click through' the upper layers.  Typically you make layers very small in css, but tell jParallax they are big via width and height. You prabably want overflow: visible on those layers, too.</td>
+        </tr>
+    </tbody>
+</table>
 
-    </dl>
-
-    <h4>Events</h4>
-
-    <dl class="events">
-        <dt>freeze</dt>
-        <dd>Trigger on a layer to stop it moving.
-            <pre>jQuery('.parallax-layer').trigger('freeze');</pre>
-            Passing in an optional data object allows you to freeze it to a specific position: it can be used to tell a layer where to go, and how fast to go there. It can have the following properties:
-            <dl>
-                <dt>x:</dt><dd>0-1</dd>
-                <dt>y:</dt><dd>0-1</dd><dd>Coordinates are ratios of width or height.</dd>
-                <dt>decay:</dt><dd>0-1</dd><dd>Same as takeoverDecay option. Sets the rate at which the layers 'catch up' with the freeze position. 0 is instantly, 1 is forever.</dd>
-            </dl>
-        </dd>
-        
-        <dt>unfreeze</dt>
-        <dd>Trigger on a layer to unfreeze it.</dd>
-    </dl>
-
-    <h4>Layer Options <span class="default">default values</span></h4>
+    <h3>Layer Options</h3>
     <p>In addition to the global options above, individual layers can be passed their own set of options as extra arguments:</p>
   
     <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#003369;">jQuery</span>(<span style="color:#760f15;">'.parallax-layer'</span>).<span style="color:#003369;">parallax</span>(options, layer_0_options, layer_1_options, ... );</pre>
   
   <p>As an example, to give the second layer a set xtravel value, but pass no options as default:</p>
   
-  <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#003369;">jQuery</span>(<span style="color:#760f15;">'.parallax-layer'</span>).<span style="color:#003369;">jparallax</span>({}, {}, {xtravel: <span style="color:#760f15;">'200px'</span>});</pre>
+  <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#003369;">jQuery</span>(<span style="color:#760f15;">'.parallax-layer'</span>).<span style="color:#003369;">parallax</span>({}, {}, {xtravel: <span style="color:#760f15;">'200px'</span>});</pre>
   
-  <p>A layer option object can have the properties xparallax, yparallax, xorigin, yorigin, width and height.</p>
-  
-  <h3>Tips</h3>
-  
-  <!--h4>Making layer content clickable</h4>
-  <p>Layers can contain anything. They could contain links. Normally, however, the top layer (the last child of #parallax) is going to be the only one that can have clickable items on as the other layers will be behind it. But wait! There is a workaround:</p>
+  <p>A layer option object can have the properties xparallax, yparallax, xorigin, yorigin, width and height, with the same meanings as described above.</p>
+
+    <h3>Events</h3>
+    <p>Events can be triggered on layers using jQuery's trigger method:</p>
+    <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#003369;">jQuery</span>( <span style="color:#760f15;">'.parallax-layer'</span> ).<span style="color:#003369;">trigger</span>({ type: <span style="color:#760f15;">'freeze'</span> });</pre>
+<table class="options">
+    <thead>
+        <tr>
+            <td>Event</td><td>Event object properties</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2" class="key">freeze</td><td class="value">{ type: 'freeze', x: <em>0-1</em>, y: <em>0-1</em>, decay: <em>0-1</em> }</td>
+        </tr>
+        <tr>
+            <td class="note">Stops the layer from moving. Use the optional event object properties to send the layer to a specific position: <code>x</code> and <code>y</code> tell a layer where to go (expressed as a ratio of the width of the viewport in the range 0-1), and <code>decay</code> how fast to go there ( where 0 is immediate and 1 is forever ).  When the layer comes to rest the class <code>'freeze'</code> is given to the layer. freezeClass is setable in the options object. </td>
+        </tr>
+        <tr>
+            <td rowspan="2" class="key">unfreeze</td><td class="value">{ type: 'unfreeze' }</td>
+        </tr>
+        <tr>
+            <td class="note">Should be 'thaw', I suppose, really. That sounds weird, though. Unfreeze sets the layer in motion again.</td>
+        </tr>
+    </tbody>
+</table>
+
+  <h3>Some sites using jParallax</h3>
   <ul>
-  	<li>Set the top layer's CSS dimensions to be really small, say, 1px by 1px.</li>
-  	<li>Use the <strong>layer[i].width</strong> and <strong>layer[i].height</strong> options to tell Parallax the real dimensions of the layer.</li>
-  	<li>Absolutely or relatively position your items on the layer.  The layer container element is only 1px big, but (assuming overflow is not hidden) the items will happily sit outside.</li>
-  	<li>The second layer is now clickable between the gaps in the items on the top layer!</li>
-  </ul-->
+    <li><a href="http://www.thebeatlesrockband.com/">The Beatles Rock Band</a></li>
+    <li><a href="http://neverforget.us">Never Forget Us</a></li>
+    <li><a href="http://www.axethebeertax.com/">I'm Backing the Pub Campaign</a></li>
+    <li><a href="http://www.foldifoldi.com/">foldifoldi.com</a></li>
+    <li><a href="http://omarelsayed.com/">omarelsayed.com</a>
+    <li><a href="http://htmlexpress.de/">htmlexpress.de</a></li>
+    <li><a href="http://http://thierrysegur.com/">thierrysegur.com</a></li>
+    <li><a href="http://flickaway.s3.amazonaws.com/ploreex/ploreex.html">Experimental flickr visualiser</a></li>
+    <li><a href="http://themeforest.net/item/communizine/19178">Communizine Wordpress theme</a></li>
+    <li><a href="http://housamz.com">housamz.com</a></li>
+  </ul>
+  <p>Let me know if you have a site that uses jParallax - 'Write to me' form at the top of this page.</p>
+
+  <h3>Tips</h3>
   
   <h4>Transparent image layers</h4>
   <p>Lots of transparency in images will slow down a browser's ability to render quickly.  Avoid making huge layers of semi-opaque graphics if you don't want lesser browsers to choke.</p>
   <p>Try <a href="http://plugins.jquery.com/project/iFixPng2">jQuery iFixPng plugin</a>, to make see-through .png images work on IE6.</p>
 
-  <h3>Sites using jParallax</h3>
-  <ul>
-    <li><a href="http://www.foldifoldi.com/">www.foldifoldi.com</a></li>
-    <li><a href="http://htmlexpress.de/">htmlexpress.de</a></li>
-    <li><a href="http://flickaway.s3.amazonaws.com/ploreex/ploreex.html">ploreex flickr visualiser</a></li>
-    <li><a href="http://www.vektordesign.com/">vektordesign.com</a></li>
-    <li><a href="http://dezignus.com/">dezignus.com</a></li>
-    <li><a href="http://themeforest.net/item/communizine/19178">Communizine Wordpress theme</a></li>
-    <li><a href="http://stephband.info">stephband.info</a>, complete parallax overkill</li>
-    <li><a href="http://housamz.com">housamz.com</a></li>
-    <!--li><a href="http://www.laura-mitchell.com">www.laura-mitchell.com</a></li-->
-  </ul>
-  <p>Let me know if you have a site that uses jParallax using the 'Write to me' form at the top of this page.</p>
-  
   <h3>Version history</h3>
     <p>See the <a href="changelog.html">changelog</a>.</p>
 </div>
@@ -229,8 +313,8 @@ Numbers outside the range 0-1 may also be used.</dd>
 
 <div id="pullnav">
 
-  <a href="#" id="contact"><img src="../images/icon_letter.png" alt=""/> Write to me</a>
-  <a href="#" id="beer"><img src="../images/icon_beer.png" alt=""/> Buy me a beer!</a>
+  <a href="#" id="contact"><img src="http://webdev.stephband.info/images/icon_letter.png" alt=""/> Write me</a>
+  <a href="#" id="beer"><img src="http://webdev.stephband.info/images/icon_beer.png" alt=""/> Buy me beer</a>
   <div id="housing">
     <form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="donate">
       <input type="hidden" name="cmd" value="_xclick" />
@@ -248,7 +332,7 @@ Numbers outside the range 0-1 may also be used.</dd>
       <input type="hidden" name="bn" value="PP-BuyNowBF" />
       <input type="submit" value="Donate with PayPal" border="0" name="submit" alt="PayPal - The safer, easier way to pay online." />
     </form>
-    <form action="php/sendmail.php" method="post" id="message">
+    <form action="http://webdev.stephband.info/php/sendmail.php" method="post" id="message">
       <input type="text" border="0" name="email" value="your email address" class="email" />
       <textarea name="message" value="write" >your message</textarea>
       <label for="website" class="website">What is nine times eleven? </label><input type="text" border="0" name="website" value="99" class="website" />
@@ -259,7 +343,7 @@ Numbers outside the range 0-1 may also be used.</dd>
 
 </div>
 
-<script type="text/javascript" src="js/jquery-nightly.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
 <script type="text/javascript" src="http://webdev.stephband.info/events/frame/js/jquery.event.frame.js"></script>
 <script type="text/javascript" src="js/jquery.jparallax.js"></script>
 <!--script type="text/javascript" src="../js/email.js"></script-->
@@ -269,20 +353,28 @@ var inPullNav = false;
     
 jQuery(document).ready(function(){
   
-    //jQuery('h1').html('<img src="http://webdev.stephband.info/images/logo_stephband_medcoalblue.png" />');
-  
-  	jQuery('#parallax>.parallax-layer')
+  	jQuery('#parallax .parallax-layer')
   	.parallax({
         mouseport: jQuery('#parallax')
   	});
   	
-/*
+
   	jQuery('#beer').click(function(){
-      jQuery('#housing').animate({height: "3em"}, 120).children('#donate').show().siblings().hide();
+      jQuery('#housing')
+      .animate({height: "4em"}, 120)
+      .children('#donate')
+      .show()
+      .siblings()
+      .hide();
     });
     
   	jQuery('#contact').click(function(){
-      jQuery('#housing').animate({height: 140}, 120).children('#message').show().siblings().hide();
+      jQuery('#housing')
+      .animate({height: 168}, 120)
+      .children('#message')
+      .show()
+      .siblings()
+      .hide();
     });
     
     jQuery('#pullnav input, #pullnav textarea').focus(function(){inPullNav = true;}).blur(function(){inPullNav = false;});
@@ -295,26 +387,25 @@ jQuery(document).ready(function(){
     
     jQuery('#contact').hover(
       function(){
-        jQuery('#contact img').attr({src: "../images/icon_letter_on.png"});
+        jQuery('#contact img').attr({src: "http://webdev.stephband.info/images/icon_letter_on.png"});
       },
       function(){
-        jQuery('#contact img').attr({src: "../images/icon_letter.png"});
+        jQuery('#contact img').attr({src: "http://webdev.stephband.info/images/icon_letter.png"});
       }
     );
     
     jQuery('#beer').hover(
       function(){
-        jQuery('#beer img').attr({src: "../images/icon_beer_on.png"});
+        jQuery('#beer img').attr({src: "http://webdev.stephband.info/images/icon_beer_on.png"});
       },
       function(){
-        jQuery('#beer img').attr({src: "../images/icon_beer.png"});
+        jQuery('#beer img').attr({src: "http://webdev.stephband.info/images/icon_beer.png"});
       }
     );
     
     jQuery('body').click(function(){
       //jQuery('#donate').hide();
     });
-*/
   	
 });
 

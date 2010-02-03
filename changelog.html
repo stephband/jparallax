@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
@@ -15,7 +15,14 @@
   @import "http://webdev.stephband.info/css/typography.css";
   @import "http://webdev.stephband.info/css/style_light.css";
   @import "css/jparallax.css";
-  
+
+  h1 {
+    width: 532px; height: 0;
+    overflow: hidden;
+    padding-top: 78px;
+    background: url('http://webdev.stephband.info/images/logo_stephband_medcoalblue.png') no-repeat;
+  }
+
   #parallax
     {position:relative; overflow:hidden; width:60em; height:20em;}
     
@@ -67,17 +74,21 @@
 <div id="content">
     
     <h2>jParallax</h2>
-    
-  <h3>Version history</h3>
+    <h3>Repository</h3>
+    <ul>
+        <li><a href="http://github.com/stephband/jparallax">http://github.com/stephband/jparallax</a></li>
+        <li>git clone git@github.com:stephband/jparallax.git</li>
+    </ul>
+  <h3>Changelog</h3>
 
-<h4>Changes to jParallax 0.9.x Beta &gt; 1.x</h4>
+<h4>Changes to jParallax 0.9.x &gt; 1.x</h4>
 <p>jParallax is more flexible, the options have been simplified, and events added for controlling behaviour of layers. Those who are used to the beta versions will find a few things have changed:</p>
 <h4>Changes to the API</h4>
 <ul>
     <li><strong>Namespace changed to .parallax() </strong>jParallax adds the namespace <code>.parallax()</code>  to jQuery. I prefer this to the previous <code>.jparallax()</code> as it fits the plain-language jQuery ethos. If you don't like it, you can change it back with the first variable in the plugin <code>var plugin = 'parallax';</code>.</li>
     <li><strong>Declared on layers </strong><code>.parallax()</code> is now declared on the <em>layers</em> rather than on a 'viewport' wrapper.  You can now be more selective about which elements parallax and which do not, and you can even choose to parallax layers in different viewports at the same time. In short, it's much more flexible.  (It also saves some unnecessary mucking about internally.)</li>
     <li><strong>Freeze and re-position </strong>Freeze layers and send them to specific positions using the custom events <code>'freeze'</code> and <code>'unfreeze'</code>.</li>
-    <li><strong>Document is the default mouseport</strong> Many people ask how to set up parallax so that it reacts to mouse movement over the whole page. This is now the default behaviour. Use the <code>mouseport</code> option to set another element to react to. For the classic parallax-in-a-viewport effect, you will want to set <code>mouseport</code> to the same element you are using as a viewport.</li>
+    <li><strong>Body is the default mouseport</strong> By default parallaxing layers will react to mouse movement over the whole body. Use the <code>mouseport</code> option to set another element to react to. For the classic parallax-in-a-viewport effect, you will want to set <code>mouseport</code> to the same element you are using as a viewport.</li>
     <li><strong>Set up viewports using CSS </strong>It is up to you to create a viewport, if that's the effect you are looking for, using CSS. jParallax comes with some CSS that will get you started.</li>
     <li><strong>Set up mouseports using CSS </strong>You can now define where the limits of a mouseport's reactive area are, using CSS borders and padding. You'll find that to be useful for setting up a row of parallaxing thumbnails [hint, hint].</li>
     <li><strong>linkResponse option removed </strong>Use the new <code>freeze</code> event, which allows full control over positioning. It is fairly easy to set up <code>linkResponse</code> functionality using <code>freeze</code> events.</li>
@@ -174,99 +185,11 @@
 
 </div>
 
-
-<div id="pullnav">
-
-  <a href="#" id="contact"><img src="../images/icon_letter.png" alt=""/> Write to me</a>
-  <a href="#" id="beer"><img src="../images/icon_beer.png" alt=""/> Buy me a beer!</a>
-  <div id="housing">
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="donate">
-      <input type="hidden" name="cmd" value="_xclick" />
-      <input type="hidden" name="business" value="stephband@lineone.net" />
-      <input type="hidden" name="item_name" value="jParallax Donation" />
-      &pound; <input type="text" name="amount" value="2.80" size="5" maxlength="5" />
-      <input type="hidden" name="shipping" value="0.00" />
-      <input type="hidden" name="no_shipping" value="1" />
-      <input type="hidden" name="return" value="http://webdev.stephband.info/thanks.html" />
-      <input type="hidden" name="cancel_return" value="http://webdev.stephband.info/cancelled.html" />
-      <input type="hidden" name="no_note" value="1" />
-      <input type="hidden" name="currency_code" value="GBP" />
-      <input type="hidden" name="tax" value="0.00" />
-      <input type="hidden" name="lc" value="GB" />
-      <input type="hidden" name="bn" value="PP-BuyNowBF" />
-      <input type="submit" value="Donate with PayPal" border="0" name="submit" alt="PayPal - The safer, easier way to pay online." />
-    </form>
-    <form action="php/sendmail.php" method="post" id="message">
-      <input type="text" border="0" name="email" value="your email address" class="email" />
-      <textarea name="message" value="write" >your message</textarea>
-      <label for="website" class="website">What is nine times eleven? </label><input type="text" border="0" name="website" value="99" class="website" />
-      <input type="submit" border="0" name="submit" value="Send" />
-    </form>
-  </div>
-
-
-</div>
-
 <script type="text/javascript" src="js/jquery-nightly.js"></script>
 <script type="text/javascript" src="http://webdev.stephband.info/events/frame/js/jquery.event.frame.js"></script>
 <script type="text/javascript" src="js/jquery.jparallax.js"></script>
-<!--script type="text/javascript" src="../js/email.js"></script-->
-<script type="text/javascript">
 
-var inPullNav = false;
-    
-jQuery(document).ready(function(){
-  
-    //jQuery('h1').html('<img src="http://webdev.stephband.info/images/logo_stephband_medcoalblue.png" />');
-  
-  	jQuery('#parallax>.parallax-layer')
-  	.parallax({
-        mouseport: jQuery('#parallax')
-  	});
-  	
-/*
-  	jQuery('#beer').click(function(){
-      jQuery('#housing').animate({height: "3em"}, 120).children('#donate').show().siblings().hide();
-    });
-    
-  	jQuery('#contact').click(function(){
-      jQuery('#housing').animate({height: 140}, 120).children('#message').show().siblings().hide();
-    });
-    
-    jQuery('#pullnav input, #pullnav textarea').focus(function(){inPullNav = true;}).blur(function(){inPullNav = false;});
-    
-    jQuery('#pullnav').hover(function(){}, function(){
-        if (!inPullNav) {
-        jQuery('#housing').animate({height: 0}, 500).children().hide();
-        }
-    });
-    
-    jQuery('#contact').hover(
-      function(){
-        jQuery('#contact img').attr({src: "../images/icon_letter_on.png"});
-      },
-      function(){
-        jQuery('#contact img').attr({src: "../images/icon_letter.png"});
-      }
-    );
-    
-    jQuery('#beer').hover(
-      function(){
-        jQuery('#beer img').attr({src: "../images/icon_beer_on.png"});
-      },
-      function(){
-        jQuery('#beer img').attr({src: "../images/icon_beer.png"});
-      }
-    );
-    
-    jQuery('body').click(function(){
-      //jQuery('#donate').hide();
-    });
-*/
-  	
-});
 
-</script>
 
 
 </body>

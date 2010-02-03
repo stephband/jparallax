@@ -20,7 +20,7 @@ var plugin = "parallax";
 // VAR
 
 var options = {
-        mouseport:      document,           // jQuery object or selector - DOM Element to use as mouse detector
+        mouseport:      'body',             // jQuery object or selector - DOM Element to use as mouse detector
         xparallax:      true,               // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
         yparallax:      true,               //
         xorigin:        0.5,                // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
@@ -358,16 +358,23 @@ function update(e){
 jQuery.fn[plugin] = function(o){
     var global = jQuery.extend({}, jQuery.fn[plugin].options, o),
         args = arguments,
-        layers = this,
-        port = new Port(global.mouseport, global),
-        mouse = new Mouse(global);
+        layers = this;
     
-    global.port = port;
-    global.mouse = mouse;
+    console.log(global.mouseport);
+    
+    // Turn mouseport into jQuery obj
+    if ( !(global.mouseport instanceof jQuery) ) {
+        global.mouseport = jQuery(global.mouseport); 
+    }
+    
+    console.log(global.mouseport);
+    
+    global.port = new Port(global.mouseport, global);
+    global.mouse = new Mouse(global);
     
     global.mouseport
     .bind("mouseenter", function(e){
-        mouse.ontarget = false;
+        global.mouse.ontarget = false;
         
         // Animate unfrozen layers
         layers
