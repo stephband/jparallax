@@ -1,5 +1,5 @@
 // jquery.jparallax.js
-// 1.0 - dev
+// 1.0
 // Stephen Band
 //
 // Project and documentation site:
@@ -20,14 +20,14 @@ var plugin = "parallax";
 // VAR
 
 var options = {
-        mouseport:      'body',             // jQuery object or selector - DOM Element to use as mouse detector
-        xparallax:      true,               // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
-        yparallax:      true,               //
-        xorigin:        0.5,                // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
-        yorigin:        0.5,                //
-        decay:          0.66,               // 0-1 (0 instant, 1 forever) - Sets rate of decay curve for catching up with target mouse position
-        frameDuration:  30,                 // Int (milliseconds)
-        freezeClass:    'freeze'            // String - Class added to layer when frozen
+        mouseport:      'body',    // jQuery object or selector - DOM Element to use as mouse detector
+        xparallax:      true,      // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
+        yparallax:      true,      //
+        xorigin:        0.5,       // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
+        yorigin:        0.5,       //
+        decay:          0.66,      // 0-1 (0 instant, 1 forever) - Sets rate of decay curve for catching up with target mouse position
+        frameDuration:  30,        // Int (milliseconds)
+        freezeClass:    'freeze'   // String - Class added to layer when frozen
     },
     value = {
         left: 0,
@@ -461,7 +461,6 @@ jQuery.fn[plugin].options = options;
 // RUN
 
 jQuery(document).ready(function(){
-    
     // Pick up and store mouse position on jQuery(document)
     // IE does not register mousemove on jQuery(window)
     jQuery(document)
