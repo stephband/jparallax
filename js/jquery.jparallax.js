@@ -20,7 +20,7 @@ var plugin = "parallax";
 // VAR
 
 var options = {
-        mouseport:      'body',    // jQuery object or selector - DOM Element to use as mouse detector
+        mouseport:      'body',    // jQuery object or selector of DOM node to use as mouse detector
         xparallax:      true,      // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
         yparallax:      true,      //
         xorigin:        0.5,       // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
@@ -158,15 +158,15 @@ function Port(object, options){
     
     // Update mouseport dimensions on window resize
     jQuery(window)
-    .bind('resize', self.updateSize)
-    .bind('resize', self.updatePos);
+    .bind('resize.'+plugin, self.updateSize)
+    .bind('resize.'+plugin, self.updatePos);
     
     // Detect entry and exit of mouse
     elem
-    .bind('mouseenter', function(e){
+    .bind('mouseenter.'+plugin, function(e){
         inside = 1;
     })
-    .bind('mouseleave', function(e){
+    .bind('mouseleave.'+plugin, function(e){
         inside = 2;
         leaveCoords = [e.pageX, e.pageY];
     });
@@ -353,21 +353,15 @@ function update(e){
     local.layer.update(mouse.pointer);
 }
 
-// PLUG DEFINITION
-
 jQuery.fn[plugin] = function(o){
     var global = jQuery.extend({}, jQuery.fn[plugin].options, o),
         args = arguments,
         layers = this;
     
-    console.log(global.mouseport);
-    
     // Turn mouseport into jQuery obj
     if ( !(global.mouseport instanceof jQuery) ) {
         global.mouseport = jQuery(global.mouseport); 
     }
-    
-    console.log(global.mouseport);
     
     global.port = new Port(global.mouseport, global);
     global.mouse = new Mouse(global);
@@ -393,8 +387,12 @@ jQuery.fn[plugin] = function(o){
         var elem = jQuery(this),
             local = elem.data(plugin),
             mouse = local.mouse || local.freeze || global.mouse,
-            x = regex.percent.exec(e.x) ? parseFloat(e.x.replace(/%$/, ''))/100 : (e.x || mouse.pointer[0]) ,
-            y = regex.percent.exec(e.y) ? parseFloat(e.y.replace(/%$/, ''))/100 : (e.y || mouse.pointer[1]) ,
+            x = (e.x === undefined) ? mouse.pointer[0] :
+                (regex.percent.exec(e.x)) ? parseFloat(e.x)/100 : 
+                e.x,
+            y = (e.y === undefined) ? mouse.pointer[1] :
+                (regex.percent.exec(e.y)) ? parseFloat(e.y)/100 :
+                e.y,
             decay = e.decay;
         
         // Store position
