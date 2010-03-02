@@ -55,6 +55,10 @@ function parseBool(x) {
     return typeof x === "boolean" ? x : !!( parseFloat(x) ) ;
 }
 
+function parseCoord(x) {
+    return (regex.percent.exec(x)) ? parseFloat(x)/100 : x;
+}
+
 // CONSTRUCTORS
 
 function Mouse(options, pointer){
@@ -232,9 +236,8 @@ function Layer(elem, options){
             
             // Convert origin to numbers
             if (typeof origin[i] === 'string') {
-                origin[i] = regex.percent.test(origin[i]) ?
-                    parseFloat(origin[i])/100 :
-                    value[ origin[i] ] || 1 ;
+                origin[i] = origin[i] === undefined ? 1 :
+                            value[ origin[i] ] || parseCoord(origin[i]) ;
             }
             
             // We're dealing with pixel dimensions
@@ -252,10 +255,7 @@ function Layer(elem, options){
             // We're dealing with ratios
             else {
                 // Set parallax, converting to ratio where necessary
-                parallax[i] =
-                    p[i] === true ? 1 :
-                    regex.percent.test(p[i]) ? parseFloat(p[i])/100 :
-                    p[i] ;
+                parallax[i] = p[i] === true ? 1 : parseCoord(p[i]);
                 
                 // Set offset
                 offset[i] = parallax[i] ? origin[i] * ( 1 - parallax[i] ) : 0 ;
@@ -270,7 +270,7 @@ function Layer(elem, options){
             pointer = [],
             i = 2;
             
-        // Reverse-engineer ratio from layer's current position
+        // Reverse calculate ratio from layer's current position
         while (i--) {
             if ( px[i] ) {
                 // TODO: reverse calculation for pixel case
@@ -383,33 +383,47 @@ jQuery.fn[plugin] = function(o){
     });
     
     return layers
+    //.bind("move", function(e){
+    //    var elem = jQuery(this),
+    //        local = elem.data(plugin),
+    //        mouse = local.mouse || local.freeze || global.mouse,
+    //        coords = [
+    //            e.x === undefined ? mouse.pointer[0] : parseCoord(e.x),
+    //            e.y === undefined ? mouse.pointer[1] : parseCoord(e.y)
+    //        ],
+    //        decay = e.decay;
+    //
+    //    // Fake the mouse
+    //    global.mouse.ontarget = false;
+    //    global.port.pointer = coords;
+    //
+    //    // Start animating
+    //    elem.bind(frameEvent, global, update);
+    //})
     .bind("freeze", function(e){
         var elem = jQuery(this),
             local = elem.data(plugin),
             mouse = local.mouse || local.freeze || global.mouse,
-            x = (e.x === undefined) ? mouse.pointer[0] :
-                (regex.percent.exec(e.x)) ? parseFloat(e.x)/100 : 
-                e.x,
-            y = (e.y === undefined) ? mouse.pointer[1] :
-                (regex.percent.exec(e.y)) ? parseFloat(e.y)/100 :
-                e.y,
+            coords = coords = [
+                e.x === undefined ? mouse.pointer[0] : parseCoord(e.x),
+                e.y === undefined ? mouse.pointer[1] : parseCoord(e.y)
+            ],
             decay = e.decay;
         
         // Store position
         local.freeze = {
-            pointer: [x, y]
+            pointer: coords
         };
         
         // Create local mouse, passing in current pointer with options
         local.mouse = new Mouse(global, mouse.pointer);
         
         if (decay !== undefined) {
-            local.mouse.decay = decay
+            local.mouse.decay = decay;
         };
         
         // Start animating
-        elem
-        .bind(frameEvent, global, update);
+        elem.bind(frameEvent, global, update);
     })
     .bind("unfreeze", function(e){
         var elem = jQuery(this),
