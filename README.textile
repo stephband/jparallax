@@ -6,7 +6,6 @@ jParallax turns nodes into absolutely positioned layers that move in response to
 
 With a bit of CSS you can either set up windows to see these layers through, or leave them free to roam about.
 
-
 h2. Changelog
 
 Changes to jParallax 0.9.x > 1.x
