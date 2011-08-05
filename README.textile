@@ -2,9 +2,9 @@ h1. jParallax
 
 h2. What does jParallax do?
 
-jParallax turns nodes into absolutely positioned layers that move in response to the mouse. Depending on their dimensions these layers move at different rates, in a parallaxy kind of way.
+jParallax turns nodes into absolutely positioned layers that move in response to the mouse. Depending on their dimensions, and on the options passed in, these layers move at different rates, in a parallaxy kind of way.
 
-With a bit of CSS you can either set up windows to see these layers through, or leave them free to roam about.
+With a bit of CSS you can either set up veiwports to see these layers through, or leave them free to roam about.
 
 h2. Changelog
 
