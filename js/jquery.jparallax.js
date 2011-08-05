@@ -305,12 +305,12 @@
 	function update(e){
 		
 		var elem = jQuery(this),
-			global = e.data,
-			local = elem.data(plugin),
-			port = global.port,
-			mouse = global.mouse,
-			localmouse = local.mouse,
-			process = global.timeStamp !== e.timeStamp;
+		    global = e.data.global || e.data,
+		    local = e.data.local || elem.data(plugin),
+		    port = global.port,
+		    mouse = global.mouse,
+		    localmouse = local.mouse,
+		    process = global.timeStamp !== e.timeStamp;
 		
 		// Global objects have yet to be processed for this frame
 		if ( process ) {
@@ -362,7 +362,8 @@
 	jQuery.fn[plugin] = function(o){
 		var global = jQuery.extend({}, jQuery.fn[plugin].options, o),
 			args = arguments,
-			layers = this;
+			layers = this,
+			optionsArray = [];
 		
 		// Turn mouseport into jQuery obj
 		if ( !(global.mouseport instanceof jQuery) ) {
@@ -384,23 +385,30 @@
 				layer = layers[i];
 				
 				if (!jQuery.data(layer, plugin).freeze) {
-					jQuery.event.add(this, frameEvent, update, global);
+					jQuery.event.add(this, frameEvent, update, {
+						global: global,
+						local: optionsArray[i]
+					});
 				};
 			}
 		});
 		
 		return layers.each(function(i){
 			var elem = jQuery(this),
+			    
 			    // Construct layer options from extra arguments
 			    layerOptions = args[i+1] ? jQuery.extend({}, global, args[i+1]) : global ,
-			    layer = new Layer(elem, layerOptions);
+			    
+			    // Set up layer data. Give it a local mouse 
+			    // initialises it to start smoothly from current position
+			    layer = new Layer(elem, layerOptions),
+			    local = {
+			    	layer: layer,
+			    	mouse: new Mouse(parseBool(layerOptions.xparallax), parseBool(layerOptions.yparallax), layerOptions.decay, layer.getPointer())
+			    };
 			
-			// Set up layer data. Give it a local mouse 
-			// initialises it to start smoothly from current position
-			elem.data(plugin, {
-				layer: layer,
-				mouse: new Mouse(parseBool(layerOptions.xparallax), parseBool(layerOptions.yparallax), layerOptions.decay, layer.getPointer())
-			});
+			elem.data(plugin, local);
+			optionsArray.push(local);
 			
 			// Bind freeze and unfreeze actions directly to layers using
 			// jQuery.event.add(node, type, fn, data)
@@ -428,7 +436,7 @@
 				jQuery.event.add(this, frameEvent, update, global);
 			}, {
 				global: global,
-				local: layerOptions
+				local: local
 			});
 			
 			jQuery.event.add( this, 'unfreeze', function(e){
@@ -458,7 +466,7 @@
 				jQuery.event.add(this, frameEvent, update, global);
 			}, {
 				global: global,
-				local: layerOptions
+				local: local
 			});
 		});
 	};
