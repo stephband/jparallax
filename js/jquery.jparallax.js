@@ -460,77 +460,7 @@
 				global: global,
 				local: layerOptions
 			});
-		})
-		
-		//.bind("move", function(e){
-		//	  var elem = jQuery(this),
-		//		  local = elem.data(plugin),
-		//		  mouse = local.mouse || local.freeze || global.mouse,
-		//		  coords = [
-		//			  e.x === undefined ? mouse.pointer[0] : parseCoord(e.x),
-		//			  e.y === undefined ? mouse.pointer[1] : parseCoord(e.y)
-		//		  ],
-		//		  decay = e.decay;
-		//
-		//	  // Fake the mouse
-		//	  global.mouse.ontarget = false;
-		//	  global.port.pointer = coords;
-		//
-		//	  // Start animating
-		//	  elem.bind(frameEvent, global, update);
-		//})
-		
-		//.bind("freeze", function(e){
-		//	var elem = jQuery(this),
-		//		local = elem.data(plugin),
-		//		mouse = local.mouse || local.freeze || global.mouse,
-		//		coords = coords = [
-		//			e.x === undefined ? mouse.pointer[0] : parseCoord(e.x),
-		//			e.y === undefined ? mouse.pointer[1] : parseCoord(e.y)
-		//		],
-		//		decay = e.decay;
-		//	
-		//	// Store position
-		//	local.freeze = {
-		//		pointer: coords
-		//	};
-		//	
-		//	// Create local mouse, passing in current pointer with options
-		//	local.mouse = new Mouse(global, mouse.pointer);
-		//	
-		//	if (decay !== undefined) {
-		//		local.mouse.decay = decay;
-		//	};
-		//	
-		//	// Start animating
-		//	elem.bind(frameEvent, global, update);
-		//})
-		
-		//.bind("unfreeze", function(e){
-		//	var elem = jQuery(this),
-		//		local = elem.data(plugin),
-		//		decay = e.decay,
-		//		pointer;
-		//	
-		//	if (local.freeze) {
-		//		
-		//		// Create local mouse, passing local freeze pointer with options
-		//		pointer = local.mouse ? local.mouse.pointer : local.freeze.pointer ;
-		//		local.mouse = new Mouse(global);
-		//		local.mouse.pointer = pointer;
-		//		
-		//		// Override decay with decay passed as e.decay
-		//		if (decay !== undefined) local.mouse.decay = decay;
-		//		
-		//		// Destroy local.freeze
-		//		delete local.freeze;
-		//		
-		//		// Remove freeze class and start animating
-		//		elem
-		//		.removeClass(options.freezeClass)
-		//		.bind(frameEvent, global, update);
-		//	}
-		//});
+		});
 	};
 	
 	// EXPOSE

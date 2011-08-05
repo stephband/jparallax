@@ -1,89 +1,78 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>webdev.stephband.info</title>
+<head>
+	<meta charset="utf-8" />
+	<title>webdev.stephband.info</title>
 
+	<style type="text/css" media="screen, projection">
+		@import "http://webdev.stephband.info/css/reset.css";
+		@import "http://webdev.stephband.info/css/typography.css";
+		@import "http://webdev.stephband.info/css/style_dark.css";
+		@import "../css/jparallax.css";
+		
+		#port {
+			background: rgb(47, 49, 52);
+			margin: 1.5em 0px;
+			overflow: hidden;
+			position: relative;
+			width: 60em; height: 300px;
+		}
+	</style>
 
-<style type="text/css" media="screen, projection">
-
-    @import "http://webdev.stephband.info/css/reset.css";
-    @import "http://webdev.stephband.info/css/typography.css";
-    @import "http://webdev.stephband.info/css/style_dark.css";
-    @import "../css/jparallax.css";
-
-    #port {
-        background: rgb(47, 49, 52);
-        margin: 1.5em 0px;
-        overflow: hidden;
-        position: relative;
-        width: 60em; height: 300px;
-    }
-
-</style>
-
-<!-- Make IE recognise HTML5 elements (for styling - must stay in the head, before elements are used) -->
-<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-<!-- IE only CSS -->
-<!--[if lt IE 8]><style type="text/css"> @import "css/style_ie.css"; </style><![endif]-->
-<!-- Disable image toolbar in IE6 -->
-<!--[if lte IE 6]><meta http-equiv="imagetoolbar" content="no" /><![endif]-->
-
+	<!-- Make IE recognise HTML5 elements -->
+	<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<!-- IE only CSS -->
+	<!--[if lt IE 8]><style type="text/css"> @import "css/style_ie.css"; </style><![endif]-->
+	<!-- Disable image toolbar in IE6 -->
+	<!--[if lte IE 6]><meta http-equiv="imagetoolbar" content="no" /><![endif]-->
 </head>
 
 <body>
+	<div id="header">
+		<a href="../index.html"><h1>webdev.stephband.info</h1></a>
+	</div>
 
-<div id="header">
-    
-    <a href="../index.html"><h1>webdev.stephband.info</h1></a>
-
-</div>
-
-<div id="content">
-
-    <h2>jParallax Demos <a href="stalkbuttons.html">next</a></h2>
-    
-    <div id="port">
-        
-        <!-- Seven image layers, each layer slightly bigger than the one behind, making 'closer' layers move faster. -->
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/0.png" alt="" style="width:978px; height:325px;"/>
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/1.png" alt="" style="width:987px; height:328px;"/>
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/2.png" alt="" style="width:1001px; height:333px;"/>
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/3.png" alt="" style="width:1031px; height:343px;"/>
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/4.png" alt="" style="width:1067px; height:355px;"/>
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/5.png" alt="" style="width:1120px; height:373px;"/>
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/6.png" alt="" style="width:1200px; height:400px;"/>
-        
-        <!-- Rounded corners -->
-        <img src="http://webdev.stephband.info/images/corner_dark_tl.png" class="tl" />
-        <img src="http://webdev.stephband.info/images/corner_dark_tr.png" class="tr" />
-        <img src="http://webdev.stephband.info/images/corner_dark_bl.png" class="bl" />
-        <img src="http://webdev.stephband.info/images/corner_dark_br.png" class="br" />
-    
-    </div>
-
-</div>
-
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
-<script src="../js/jquery.jparallax.min.js"></script>
-<script type="text/javascript">
-
-jQuery(document).ready(function(){
-    
-    // Declare parallax on layers
-    jQuery('.parallax-layer').parallax({
-        mouseport: jQuery("#port")
-    });
-
-});
-
-</script>
-
-<!-- Enable png transparency in IE6 -->
-<!--[if lt IE 7]>
-<script type="text/javascript" src="js/jquery.ifixpng.js"></script>
-<script type="text/javascript">jQuery(document).ready(function(){ jQuery('img[@src$=.png]').ifixpng(); });</script>
-<![endif]-->
-
+	<div id="content">
+		<h2>jParallax Demos <a href="stalkbuttons.html">next</a></h2>
+	
+		<div id="port">
+			<!-- Seven image layers, each layer slightly bigger than the one behind, making 'closer' layers move faster. -->
+			<img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/0.png" alt="" style="width:978px; height:325px;"/>
+			<img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/1.png" alt="" style="width:987px; height:328px;"/>
+			<img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/2.png" alt="" style="width:1001px; height:333px;"/>
+			<img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/3.png" alt="" style="width:1031px; height:343px;"/>
+			<img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/4.png" alt="" style="width:1067px; height:355px;"/>
+			<img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/5.png" alt="" style="width:1120px; height:373px;"/>
+			<img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_drops/6.png" alt="" style="width:1200px; height:400px;"/>
+			
+			<!-- Rounded corners -->
+			<img src="http://webdev.stephband.info/images/corner_dark_tl.png" class="tl" />
+			<img src="http://webdev.stephband.info/images/corner_dark_tr.png" class="tr" />
+			<img src="http://webdev.stephband.info/images/corner_dark_bl.png" class="bl" />
+			<img src="http://webdev.stephband.info/images/corner_dark_br.png" class="br" />
+		</div>
+	</div>
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script>
+		!window.jQuery && document.write(unescape('%3Cscript src="../js/jquery.js"%3E%3C/script%3E'));
+	</script>
+	<script src="../js/jquery.jparallax.min.js"></script>
+	<script type="text/javascript">
+	
+		jQuery(document).ready(function(){
+			// Declare parallax on layers
+			jQuery('.parallax-layer').parallax({
+				mouseport: jQuery("#port")
+			});
+		});
+	
+	</script>
+	
+	<!-- Enable png transparency in IE6 -->
+	<!--[if lt IE 7]>
+	<script type="text/javascript" src="js/jquery.ifixpng.js"></script>
+	<script type="text/javascript">jQuery(document).ready(function(){ jQuery('img[@src$=.png]').ifixpng(); });</script>
+	<![endif]-->
 </body>
 </html>
