@@ -29,38 +29,38 @@
 
 <body>
 
-    <div id="header">
-        <a href="../index.html"><h1>webdev.stephband.info</h1></a>
-    </div>
-    
-    <div id="content">
-        <h2>jParallax Demos <a href="index.html">next</a></h2>
-    </div>
-    
-    <div id="target" class="parallax-port">
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_blue.png" alt="" />
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_green.png" alt="" />
-        <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_red.png" alt="" />
-    </div>
+  <div id="header">
+      <a href="../index.html"><h1>webdev.stephband.info</h1></a>
+  </div>
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-<script type="text/javascript" src="../js/jquery.jparallax.min.js"></script>
-<script type="text/javascript">
-    
-    jQuery(document).ready(function(){
-        var target = jQuery("#target");
-        
-        target
-        .children('img')
-        .parallax(
-            { mouseport: target },
-            { xparallax: 0.2, yparallax: 0.2 },     // Blue layer options
-            { xparallax: 0.6, yparallax: 0.6 },     // Green layer options
-            {}                                      // Red layer options
-        );
-    });
+  <div id="content">
+      <h2>jParallax Demos <a href="index.html">next</a></h2>
+  </div>
 
-</script>
+  <div id="target" class="parallax-port">
+      <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_blue.png" alt="" />
+      <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_green.png" alt="" />
+      <img class="parallax-layer" src="http://webdev.stephband.info/jparallax/images/parallax_target/target_red.png" alt="" />
+  </div>
+
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
+  <script src="../js/jquery.jparallax.min.js"></script>
+  <script type="text/javascript">
+  
+  jQuery(document).ready(function(){
+      var target = jQuery("#target");
+      
+      target
+      .children('img')
+      .parallax(
+          { mouseport: target },
+          { xparallax: 0.2, yparallax: 0.2 },     // Blue layer options
+          { xparallax: 0.6, yparallax: 0.6 },     // Green layer options
+          {}                                      // Red layer options
+      );
+  });
+
+  </script>
 
 <!--[if lt IE 7]>
 <script type="text/javascript" src="js/jquery.ifixpng.js"></script>
