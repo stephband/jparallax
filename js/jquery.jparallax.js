@@ -354,9 +354,6 @@ function update(e){
 }
 
 jQuery.fn[plugin] = function(o){
-    if (undefined === jQuery.event.special.frame) {
-        throw "jquery.event.frame is required for jparallax to work"
-    }
     var global = jQuery.extend({}, jQuery.fn[plugin].options, o),
         args = arguments,
         layers = this;
