@@ -334,7 +334,7 @@ function update(e){
             // Stop animating frozen layers
             if (local.freeze) {
                 elem
-                .unbind(frameEvent)
+                .off(frameEvent)
                 .addClass(global.freezeClass);
             }
         }
@@ -386,7 +386,7 @@ jQuery.fn[plugin] = function(o){
     });
     
     return layers
-    //.bind("move", function(e){
+    //.on("move", function(e){
     //    var elem = jQuery(this),
     //        local = elem.data(plugin),
     //        mouse = local.mouse || local.freeze || global.mouse,
@@ -401,7 +401,7 @@ jQuery.fn[plugin] = function(o){
     //    global.port.pointer = coords;
     //
     //    // Start animating
-    //    elem.bind(frameEvent, global, update);
+    //    elem.on(frameEvent, global, update);
     //})
     .on("freeze", function(e){
         var elem = jQuery(this),
