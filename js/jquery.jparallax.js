@@ -339,7 +339,9 @@ function update(e){
         var elem = $(this),
             local = elem.data(plugin);
 
-        console.log(e.accelerationIncludingGravity.x, e.accelerationIncludingGravity.y);
+        e.forEach(function (val, key) {
+           console.log(key, val);
+        });
         //local.layer.update([e.accelerationIncludingGravity.x, e.accelerationIncludingGravity.y]);
     } else {
         var elem = $(this),
@@ -505,8 +507,8 @@ $.fn[plugin] = function(o){
     } else {
         var self = this;
 
-        window.addEventListener('devicemotion', function () {
-            layers.trigger('DeviceMotionEvent', this);
+        window.addEventListener('devicemotion', function (e) {
+            layers.trigger('DeviceMotionEvent', e);
         }, false);
 
         return layers.on('DeviceMotionEvent', global, update);
