@@ -358,16 +358,16 @@ Numbers outside the range 0-1 may also be used.</td>
 
 var inPullNav = false;
     
-jQuery(document).ready(function(){
+$(document).ready(function(){
   
-  	jQuery('#parallax .parallax-layer')
-  	.parallax({
-        mouseport: jQuery('#parallax')
-  	});
-  	
+    $('#parallax .parallax-layer')
+    .parallax({
+        mouseport: $('#parallax')
+    });
 
-  	jQuery('#beer').click(function(){
-      jQuery('#housing')
+
+    $('#beer').click(function(){
+      $('#housing')
       .animate({height: "4em"}, 120)
       .children('#donate')
       .show()
@@ -375,8 +375,8 @@ jQuery(document).ready(function(){
       .hide();
     });
     
-  	jQuery('#contact').click(function(){
-      jQuery('#housing')
+    $('#contact').click(function(){
+      $('#housing')
       .animate({height: 168}, 120)
       .children('#message')
       .show()
@@ -384,36 +384,35 @@ jQuery(document).ready(function(){
       .hide();
     });
     
-    jQuery('#pullnav input, #pullnav textarea').focus(function(){inPullNav = true;}).blur(function(){inPullNav = false;});
+    $('#pullnav input, #pullnav textarea').focus(function(){inPullNav = true;}).blur(function(){inPullNav = false;});
     
-    jQuery('#pullnav').hover(function(){}, function(){
+    $('#pullnav').hover(function(){}, function(){
         if (!inPullNav) {
-        jQuery('#housing').animate({height: 0}, 500).children().hide();
+        $('#housing').animate({height: 0}, 500).children().hide();
         }
     });
     
-    jQuery('#contact').hover(
+    $('#contact').hover(
       function(){
-        jQuery('#contact img').attr({src: "http://webdev.stephband.info/images/icon_letter_on.png"});
+        $('#contact img').attr({src: "http://webdev.stephband.info/images/icon_letter_on.png"});
       },
       function(){
-        jQuery('#contact img').attr({src: "http://webdev.stephband.info/images/icon_letter.png"});
+        $('#contact img').attr({src: "http://webdev.stephband.info/images/icon_letter.png"});
       }
     );
     
-    jQuery('#beer').hover(
+    $('#beer').hover(
       function(){
-        jQuery('#beer img').attr({src: "http://webdev.stephband.info/images/icon_beer_on.png"});
+        $('#beer img').attr({src: "http://webdev.stephband.info/images/icon_beer_on.png"});
       },
       function(){
-        jQuery('#beer img').attr({src: "http://webdev.stephband.info/images/icon_beer.png"});
+        $('#beer img').attr({src: "http://webdev.stephband.info/images/icon_beer.png"});
       }
     );
     
-    jQuery('body').click(function(){
-      //jQuery('#donate').hide();
+    $('body').click(function(){
+      //$('#donate').hide();
     });
-  	
 });
 
 </script>
