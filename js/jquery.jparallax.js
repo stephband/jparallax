@@ -162,15 +162,15 @@ function Port(object, options){
     
     // Update mouseport dimensions on window resize
     jQuery(window)
-    .bind('resize.'+plugin, self.updateSize)
-    .bind('resize.'+plugin, self.updatePos);
+    .on('resize.'+plugin, self.updateSize)
+    .on('resize.'+plugin, self.updatePos);
     
     // Detect entry and exit of mouse
     elem
-    .bind('mouseenter.'+plugin, function(e){
+    .on('mouseenter.'+plugin, function(e){
         inside = 1;
     })
-    .bind('mouseleave.'+plugin, function(e){
+    .on('mouseleave.'+plugin, function(e){
         inside = 2;
         leaveCoords = [e.pageX, e.pageY];
     });
@@ -346,7 +346,7 @@ function update(e){
     else {
         // When no longer active, unbind
         if ( mouse.ontarget && !port.active ) {
-            elem.unbind(frameEvent);
+            elem.off(frameEvent);
         }
     }
     
@@ -370,7 +370,7 @@ jQuery.fn[plugin] = function(o){
     global.mouse = new Mouse(global);
     
     global.mouseport
-    .bind("mouseenter", function(e){
+    .on("mouseenter", function(e){
         global.mouse.ontarget = false;
         
         // Animate unfrozen layers
@@ -380,7 +380,7 @@ jQuery.fn[plugin] = function(o){
             
             if ( !layer.data(plugin).freeze ) {
                 layer
-                .bind(frameEvent, global, update);
+                .on(frameEvent, global, update);
             }
         });
     });
@@ -403,7 +403,7 @@ jQuery.fn[plugin] = function(o){
     //    // Start animating
     //    elem.bind(frameEvent, global, update);
     //})
-    .bind("freeze", function(e){
+    .on("freeze", function(e){
         var elem = jQuery(this),
             local = elem.data(plugin),
             mouse = local.mouse || local.freeze || global.mouse,
@@ -426,9 +426,9 @@ jQuery.fn[plugin] = function(o){
         };
         
         // Start animating
-        elem.bind(frameEvent, global, update);
+        elem.on(frameEvent, global, update);
     })
-    .bind("unfreeze", function(e){
+    .on("unfreeze", function(e){
         var elem = jQuery(this),
             local = elem.data(plugin),
             decay = e.decay,
@@ -450,7 +450,7 @@ jQuery.fn[plugin] = function(o){
             // Remove freeze class and start animating
             elem
             .removeClass(options.freezeClass)
-            .bind(frameEvent, global, update);
+            .on(frameEvent, global, update);
         }
     })
     .each(function(i){
