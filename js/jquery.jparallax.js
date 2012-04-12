@@ -208,7 +208,7 @@
                     }
                     // We're working by ratio
                     else {
-                        cssPosition = pos[x] * 100 + '%';
+                        cssPosition = (pos[x] * 100) + '%';
                         cssMargin = pos[x] * this.size[x] * -1;
                     }
 
@@ -500,8 +500,8 @@
 
                 layers.trigger('DeviceMotionEvent', {
                     accelerationIncludingGravity: {
-                        x: ((orientation) ? lr : tb + 90) / 100,
-                        y: ((orientation) ? tb : lr + 90) / 100
+                        x: ((orientation) ? lr : tb + 90) / 300,
+                        y: ((orientation) ? tb : lr + 90) / 200
                     }
                 });
             }, false);
