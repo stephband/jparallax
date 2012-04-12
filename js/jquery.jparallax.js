@@ -334,15 +334,12 @@ function Layer(elem, options){
 
 // EVENT HANDLERS
 
-function update(e){
+function update(e, data){
     if (window.DeviceMotionEvent) {
         var elem = $(this),
             local = elem.data(plugin);
 
-        e.forEach(function (val, key) {
-           console.log(key, val);
-        });
-        //local.layer.update([e.accelerationIncludingGravity.x, e.accelerationIncludingGravity.y]);
+        local.layer.update([data.accelerationIncludingGravity.x, data.accelerationIncludingGravity.y]);
     } else {
         var elem = $(this),
             global = e.data,
@@ -508,10 +505,29 @@ $.fn[plugin] = function(o){
         var self = this;
 
         window.addEventListener('devicemotion', function (e) {
-            layers.trigger('DeviceMotionEvent', e);
+            layers.trigger('DeviceMotionEvent', {
+                accelerationIncludingGravity: {
+                    x: Math.round(e.accelerationIncludingGravity.x) / 10,
+                    y: Math.round(e.accelerationIncludingGravity.y) / 10
+                }
+            });
         }, false);
 
-        return layers.on('DeviceMotionEvent', global, update);
+        return layers.on('DeviceMotionEvent', global, update)
+            .each(function(i){
+            var elem = $(this),
+
+            // Construct layer options from extra arguments
+                layerOptions = args[i+1] ? $.extend({}, global, args[i+1]) : global ,
+                layer = new Layer(elem, layerOptions);
+
+            // Set up layer data. Give it a local mouse
+            // initialises it to start smoothly from current position
+            elem.data(plugin, {
+                layer: layer,
+                mouse: new Mouse(layerOptions, layer.getPointer())
+            });
+        });
     }
 };
 
