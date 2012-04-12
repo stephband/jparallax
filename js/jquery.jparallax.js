@@ -102,44 +102,6 @@
         };
     }
 
-    function DeviceMotion(options, pointer) {
-
-        // Convert parallax options to boolean values
-        var parallax = [ parseBool(options.xparallax), parseBool(options.yparallax) ];
-
-        this.ontarget = false;
-        this.decay = options.decay;
-        this.pointer = pointer || [0.5, 0.5];
-        this.update = function (pointer, threshold) {
-
-            // Pointer is already on target
-            if (this.ontarget) {
-                this.pointer = pointer;
-            }
-
-            // Pointer has arrived within the target thresholds
-            else if ((!parallax[0] || abs(pointer[0] - this.pointer[0]) < threshold[0]) &&
-                (!parallax[1] || abs(pointer[1] - this.pointer[1]) < threshold[1])) {
-
-                this.ontarget = true;
-                this.pointer = pointer;
-            }
-
-            // Pointer is nowhere near the target
-            else {
-                var lagPointer = [],
-                    x = 2;
-
-                while (x--) {
-                    if (parallax[x]) {
-                        lagPointer[x] = pointer[x] + this.decay * (this.pointer[x] - pointer[x]);
-                    }
-                }
-                this.pointer = lagPointer;
-            }
-        };
-    }
-
     function Port(object, options) {
         var self = this,
             elem = object instanceof $ ? object : $(object) ,
