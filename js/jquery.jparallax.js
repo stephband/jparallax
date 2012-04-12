@@ -477,22 +477,31 @@
                 });
         } else {
             var self = this;
+            var orientation = (Math.abs(window.orientation) == 0) ? true : false;
+
+            window.addEventListener('orientationchange', function() {
+                if (Math.abs(window.orientation) == 0) {
+                    orientation = true;
+                } else {
+                    orientation = false;
+                }
+            }, false);
 
             window.addEventListener('devicemotion', function (e) {
                 var acceleration = e.accelerationIncludingGravity;
 
-                var facingUp = -1;
+                var upSideDown = -1;
                 if (acceleration.z > 0) {
-                    facingUp = +1;
+                    upSideDown = +1;
                 }
 
-                var tiltLR = Math.round(((acceleration.x) / 9.81) * -90);
-                var tiltFB = Math.round(((acceleration.y + 9.81) / 9.81) * 90 * facingUp);
+                var lr = Math.round(((acceleration.x) / 9.81) * -90);
+                var tb = Math.round(((acceleration.y + 9.81) / 9.81) * 90 * upSideDown);
 
                 layers.trigger('DeviceMotionEvent', {
-                    accelerationIncludingGravity:{
-                        x:tiltLR / 100,
-                        y:tiltFB / 100
+                    accelerationIncludingGravity: {
+                        x: ((orientation) ? lr : tb + 90) / 100,
+                        y: ((orientation) ? tb : lr + 90) / 100
                     }
                 });
             }, false);
