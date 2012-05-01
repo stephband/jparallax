@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+
+<meta charset="utf-8" />
+
+<script type="text/javascript">
+<!-- document.documentElement.className+='js'; //-->
+</script>
+
+<!-- Disable image toolbar in IE6 -->
+<!--[if lte IE 6]><meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+
+<title>jParallax</title>
+
+<link rel="stylesheet" type="text/css" href="css/base.css" media="screen, projection" />
+<link rel="stylesheet" type="text/css" href="css/documenation.css" media="screen, projection" />
+<link rel="stylesheet" type="text/css" href="css/jparallax.css" media="screen, projection" />
+<link rel="stylesheet" type="text/css" href="css/print.css" media="print" />
+
+<style type="text/css" media="screen, projection">
+    
+    h1          { margin: 0 0 24px;}
+    p, code     { width: 845px; margin: 0 auto 24px; display: block; }
+    
+    #log        { width: 80%; margin: 1em auto; background: #f8f6f4; }
+    
+    .port       { height: 40%; width: 80%; margin: 2em auto; background: #f6f6f6; clear: both; }
+    .red        { width: 2000px; height: 2000px; background: url('images/parallax_target/target_red.png'); }
+    .green      { width: 2000px; height: 2000px; background: url('images/parallax_target/target_green.png'); }
+    .blue       { width: 2000px; height: 2000px; background: url('images/parallax_target/target_blue.png'); }
+    
+    .freeze     { background-color: red; }
+    
+    #test1      { border: 20px solid #999999; }
+    #test2      { padding: 20px; }
+    #test3      { width: 36%; margin-left: 10%; float: left; padding: 0; background: #c3c3c3; }
+    #test4      { width: 36%; margin-right: 10%; float: right; padding: 0; background: #c3c3c3; clear: none; }
+    
+    #test2 .parallax-layer { top: 0; left: -984px; }
+    
+</style>
+
+</head>
+
+<body>
+
+<div id="log">
+0.00, 0.00
+</div>
+
+<div id="test1" class="port parallax-viewport">
+    <div class="red parallax-layer"></div>
+    <div class="green parallax-layer"></div>
+    <div class="blue parallax-layer"></div>
+</div>
+
+<div id="test2" class="port parallax-viewport">
+    <div class="red parallax-layer"></div>
+    <!--div class="green parallax-layer"></div>
+    <div class="blue parallax-layer"></div-->
+</div>
+
+<ul class="horizontal">
+    <li><a href="#freeze">{type: 'freeze'}</a></li>
+    <li><a href="#freezeto40">{type: 'freeze', x: '44%', y: '47%', decay: 0.9}</a></li>
+    <li><a href="#freezeto50">{type: 'freeze', x: '50%', y: '50%'}</a></li>
+    <li><a href="#freezeto60">{type: 'freeze', x: 0.52, y: 0.52}</a></li>
+    <li class="last"><a href="#unfreeze">unfreeze</a></li>
+</ul>
+
+<div id="test3" class="port parallax-viewport">
+    <div class="blue parallax-layer"></div>
+    <div class="green parallax-layer"></div>
+</div>
+
+<div id="test4" class="port parallax-viewport">
+    <div class="red parallax-layer"></div>
+</div>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.event.frame.js"></script>
+<script type="text/javascript" src="js/jquery.jparallax.min.js"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery("#test1 .parallax-layer").parallax({
+            //mouseport: jQuery("#test1")
+        },
+        {
+            yparallax: false,
+            width: 100
+        });
+        
+        jQuery("#test2 .parallax-layer").parallax({
+            mouseport: jQuery("#test2"),
+            xparallax: '200px',
+            yparallax: false,
+            width: 200
+        });
+        
+        jQuery("#test3 .parallax-layer").parallax({
+            mouseport: jQuery("#test3"),
+            xparallax: false
+        });
+        
+        jQuery("#test4 .parallax-layer").parallax({
+            mouseport: jQuery("#test4"),
+            yparallax: false
+        });
+        
+        jQuery("a[href='#freeze']").bind('click', function(e){
+            jQuery(".red").trigger({type: 'freeze'});
+        });
+
+        jQuery("a[href='#freezeto40']").bind('click', function(e){
+            jQuery(".red").trigger({type: 'freeze', x: '44%', y: '47%', decay: 0.9});
+        });
+
+        jQuery("a[href='#freezeto50']").bind('click', function(e){
+            jQuery(".red").trigger({type: 'freeze', x: '50%', y: '50%'});
+        });
+
+        jQuery("a[href='#freezeto60']").bind('click', function(e){
+            jQuery(".red").trigger({type: 'freeze', x: 0.52, y: 0.52});
+        });
+        
+        jQuery("a[href='#unfreeze']").bind('click', function(e){
+            jQuery(".red").trigger('unfreeze');
+        })
+    });
+</script>
+</body>
+</html>

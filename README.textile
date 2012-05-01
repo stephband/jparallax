@@ -1,0 +1,101 @@
+h1. jParallax
+
+h2. What does jParallax do?
+
+jParallax turns nodes into absolutely positioned layers that move in response to the mouse. Depending on their dimensions, and on the options passed in, these layers move at different rates, in a parallaxy kind of way.
+
+With a bit of CSS you can either set up veiwports to see these layers through, or leave them free to roam about.
+
+h2. Changelog
+
+Changes to jParallax 0.9.x > 1.x
+
+jParallax is more flexible, the options have been simplified, and events added for controlling behaviour of layers. Those who are used to the beta versions will find a few things have changed:
+Changes to the API
+
+* Namespace changed to .parallax() jParallax adds the namespace .parallax() to jQuery. I prefer this to the previous .jparallax() as it fits the plain-language jQuery ethos. If you don't like it, you can change it back with the first variable in the plugin var plugin = 'parallax';.
+* Declared on layers .parallax() is now declared on the layers rather than on a 'viewport' wrapper. You can now be more selective about which elements parallax and which do not, and you can even choose to parallax layers in different viewports at the same time. In short, it's much more flexible. (It also saves some unnecessary mucking about internally.)
+* Freeze and re-position Freeze layers and send them to specific positions using the custom events 'freeze' and 'unfreeze'.
+* Body is the default mouseport By default parallaxing layers will react to mouse movement over the whole body. Use the mouseport option to set another element to react to. For the classic parallax-in-a-viewport effect, you will want to set mouseport to the same element you are using as a viewport.
+* Set up viewports using CSS It is up to you to create a viewport, if that's the effect you are looking for, using CSS. jParallax comes with some CSS that will get you started.
+* Set up mouseports using CSS You can now define where the limits of a mouseport's reactive area are, using CSS borders and padding. You'll find that to be useful for setting up a row of parallaxing thumbnails [hint, hint].
+* linkResponse option removed Use the new freeze event, which allows full control over positioning. It is fairly easy to set up linkResponse functionality using freeze events.
+* xtravel and ytravel options removed Scaling factors for the range a layer travels are now passed in as xparallax and yparallax. These options also still accept true and false.
+
+h3. Changes to the code
+
+* Requires jquery.event.frame jParallax relies on jquery.event.frame for animation timing. The special frame event was developed specifically for use with jParallax and other plugins that require frame-based animation timers. It's included in the download. You can read about it at webdev.stephband.info/events/frame/.
+* Moveable mouseport In the Beta, jParallax would 'lose' the mouseport if it was moved after jParallax was declared: its position was cached. This has been fixed. Now it's position is cached each time the mouse enters it. (For that reason, you probably shouldn't try moving the mouseport while you're using it. I can't think of a condition when you might want to do that - a parallax inside a parallax? Anyone?)
+* Padding and border detection on mouseport Padding an border are detected and used to control the reactive area of mouseport.
+* Mouseport position no longer cached Caching the position caused problems when the mouseport was moved after instantiation.
+* All unanimated CSS removed
+* Accompanying stylesheet included in download
+* Multiple instances bug fixed in IE6
+* Uses 0-10% less CPU In my unscientific tests, which involve watching the CPU meter while playing around with the same test running each version of jParallax, version 1.0 uses about 10% less CPU in Safari 4, 5% less in Opera 9.8, about the same in Firefox 3.5.5. I haven't been able to do these kinds of tests on Windows. If anyone has some anecdotal results, send 'em on...
+
+h4. 0.9.9
+
+Withdrawn after it was realised that in refactoring it, I'd made something equally befuddled as the previous version, and it still had bugs. Some ideas from it were used to start v1.0.
+
+* Implemented events for internal control of calculation and animation, and external control of goodies like "freeze" and "link".
+* Options added: cssLayers and cssViewport, for 'embedding' styles in the jParallax declaration, should you want to.
+* triggerResponse is now linkResponse
+
+h4. 0.9.1
+
+* Fixed bug when specifying travel by %.
+* Travel px or % detection has more robust Regex.
+
+h4. 0.9
+
+* Code optimisation.
+
+h4. 0.8.1
+
+* Tested in Safari, Firefox 3, IE6, IE7, Google Chrome (Beta) and Opera 9.5. IE6 has trouble handling multiple jParallax instances when they are declared on one jQuery selector. Other than that, all present and correct. Declare your doctypes!
+* Bug fixed in matrixSearch.
+
+h4. 0.8
+
+* Gracefully handles window resize.
+* Begins to shoot for proper IE support.
+* Positioning algorithm re-written. In fact, it can barely be called an algorithm any longer, as the positioning now relies almost solely on CSS. Whereas previously it was defined absolutely in pixels, positioning is now defined by percentage combined with variable (negative) margins, forcing the browser CSS engine to take more responsibility for re-positioning. This means that window resizing is smooth, and the Javascript has less calculating to do. However, it may be more of a CPU hog this way. Some testing will be done.
+* Due to the above changes, some Options and Layer Options now mean something slightly different to their original definitions. For example, xtravel is now a ratio by default rather than a pixel definition.
+* Made a minor change to the way dimensions are registered - they now use the jQuery methods width(), height() and offset(), so they should no longer need to be explicitly set via CSS (although it wouldn't hurt, if you want to be sure). This also applies to layer contents.
+* Added Target Demo to demonstrate window resizing and Trigger Response, and updated arse demo to jParallax.
+* Some code optimising to make it faster, but there's more that can be done in this department.
+* Docs updated.
+
+h4. 0.7 (Not released)
+
+* Unreleased. Broken.
+
+h4. 0.6
+
+* Trigger response added.
+* New demos added. Remote control and a crude trigger demo.
+* Options simplified. They were getting a bit out of hand. Default options are now all attributes of one object, rather than nested objects as previously. (Layer Options still work the same way, one object per layer).
+* Docs updated.
+
+h4. 0.5
+
+* Soft Takeover animation timer and mouseport detection rewritten to get rid of jerky re-entry bugs. Life is now smoother and creamier.
+
+h4. 0.4
+
+* Based on an idea I read somewhere on the web or possibly in the book jQuery In Action, jParallax now saves CPU by moving the layers at a maximum frameRate and not on every change of mouse co-ordinates.
+* Soft Takeover animates layers to position over time on mouseport re-entry. It's a little dodgy.
+
+h4. 0.3
+
+* Implemented a crude Soft Takeover. It doesn't animate to position over time, just over mouse move, but it does make the mouseport entry a bit smoother.
+
+h4. 0.2
+
+* Fixed xtravel, ytravel and mouseport initialisation.
+* Added Stalk Button demo.
+
+h4. 0.1
+
+* Initial port to jQuery plugin framework from proof of concept code. My first jQuery plugin!
+* Colour drop demo.

@@ -1,0 +1,51 @@
+/* Base */
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, address, cite, code {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-family: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+/* Remove annoying border on linked images. */
+a img {
+    border:none;
+}
+
+a:hover,
+a:focus {
+    text-decoration: underline;
+}
+a {
+    text-decoration: none;
+}
+
+ul.horizontal {
+    list-style: none;
+}
+ul.horizontal li {
+    float: left;
+    padding: 0 0.6em;
+    border-right: 1px solid black;
+    height: 1.2em;
+}
+ul.horizontal li.last {
+    border-right: none;
+}
+
+/* Clearfix
+   http://www.positioniseverything.net/easyclearing.html
+   with added position relative */
+.clear:after    {content:"\0020"; display:block; height:0; clear:both; visibility:hidden; overflow:hidden;}
+.clear          {display:block; position: relative;}
