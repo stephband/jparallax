@@ -1,0 +1,19 @@
+{
+    "name": "jquery.parallax",
+    "title": "jquery.parallax",
+    "version": "1.0",
+    "author": {
+        "name": "Stephen Band",
+        "url": "http://stephband.info",
+        "twitter": "stephband"
+    },
+    "dependencies": {
+        "jquery": ">=1.4.2"
+    },
+    "licenses": [],
+    "files": ["js/jquery.parallax.js"],
+    "description": "jQuery.parallax turns nodes into absolutely positioned layers that move in response to the mouse. Depending on their dimensions these layers move at different rates, in a parallaxy kind of way.",
+    "keywords": ["parallax","move","interface","layer"],
+    "homepage": "http://github.com/stephband/jparallax",
+    "docs": "http://stephband.info/jparallax/"
+}
