@@ -303,14 +303,13 @@
 	// EVENT HANDLERS
 	
 	function update(e){
-		
 		var elem = jQuery(this),
-		    global = e.data.global || e.data,
-		    local = e.data.local || elem.data(plugin),
+		    global = e.data.global,
+		    local = e.data.local,
 		    port = global.port,
 		    mouse = global.mouse,
 		    localmouse = local.mouse,
-		    process = global.timeStamp !== e.timeStamp;
+		    process = (global.timeStamp !== e.timeStamp);
 		
 		// Global objects have yet to be processed for this frame
 		if ( process ) {
@@ -330,7 +329,7 @@
 		if ( localmouse ) {
 		
 			// Process mouse
-			localmouse.update( local.freeze ? local.freeze.pointer : port.pointer, port.threshold );
+			localmouse.update((local.freeze ? local.freeze.pointer : port.pointer), port.threshold);
 		
 			// If it hits target
 			if ( localmouse.ontarget ) {
@@ -433,7 +432,7 @@
 				if (decay !== undefined) { local.mouse.decay = decay; }
 				
 				// Start animating
-				jQuery.event.add(this, frameEvent, update, global);
+				jQuery.event.add(this, frameEvent, update, e.data);
 			}, {
 				global: global,
 				local: local
@@ -463,7 +462,7 @@
 				elem.removeClass(options.freezeClass);
 				
 				// Start animating
-				jQuery.event.add(this, frameEvent, update, global);
+				jQuery.event.add(this, frameEvent, update, e.data);
 			}, {
 				global: global,
 				local: local
