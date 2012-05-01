@@ -315,40 +315,6 @@ Numbers outside the range 0-1 may also be used.</td>
     <p>See the <a href="changelog.html">changelog</a>.</p>
   <h3>Bug reporting</h3>
     <p>http://cloud.github.com/downloads/stephband/jparallax/</p>
-
-</div>
-
-
-<div id="pullnav">
-
-  <a href="#" id="contact"><img src="http://webdev.stephband.info/images/icon_letter.png" alt=""/> Write me</a>
-  <a href="#" id="beer"><img src="http://webdev.stephband.info/images/icon_beer.png" alt=""/> Buy me beer</a>
-  <div id="housing">
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" id="donate">
-      <input type="hidden" name="cmd" value="_xclick" />
-      <input type="hidden" name="business" value="stephband@lineone.net" />
-      <input type="hidden" name="item_name" value="jParallax Donation" />
-      &pound; <input type="text" name="amount" value="2.80" size="5" maxlength="5" />
-      <input type="hidden" name="shipping" value="0.00" />
-      <input type="hidden" name="no_shipping" value="1" />
-      <input type="hidden" name="return" value="http://webdev.stephband.info/thanks.html" />
-      <input type="hidden" name="cancel_return" value="http://webdev.stephband.info/cancelled.html" />
-      <input type="hidden" name="no_note" value="1" />
-      <input type="hidden" name="currency_code" value="GBP" />
-      <input type="hidden" name="tax" value="0.00" />
-      <input type="hidden" name="lc" value="GB" />
-      <input type="hidden" name="bn" value="PP-BuyNowBF" />
-      <input type="submit" value="Donate with PayPal" border="0" name="submit" alt="PayPal - The safer, easier way to pay online." />
-    </form>
-    <form action="http://webdev.stephband.info/php/sendmail.php" method="post" id="message">
-      <input type="text" border="0" name="email" value="your email address" class="email" />
-      <textarea name="message" value="write" >your message</textarea>
-      <label for="website" class="website">What is nine times eleven? </label><input type="text" border="0" name="website" value="99" class="website" />
-      <input type="submit" border="0" name="submit" value="Send" />
-    </form>
-  </div>
-
-
 </div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
@@ -359,61 +325,10 @@ Numbers outside the range 0-1 may also be used.</td>
 var inPullNav = false;
     
 jQuery(document).ready(function(){
-  
   	jQuery('#parallax .parallax-layer')
   	.parallax({
         mouseport: jQuery('#parallax')
   	});
-  	
-
-  	jQuery('#beer').click(function(){
-      jQuery('#housing')
-      .animate({height: "4em"}, 120)
-      .children('#donate')
-      .show()
-      .siblings()
-      .hide();
-    });
-    
-  	jQuery('#contact').click(function(){
-      jQuery('#housing')
-      .animate({height: 168}, 120)
-      .children('#message')
-      .show()
-      .siblings()
-      .hide();
-    });
-    
-    jQuery('#pullnav input, #pullnav textarea').focus(function(){inPullNav = true;}).blur(function(){inPullNav = false;});
-    
-    jQuery('#pullnav').hover(function(){}, function(){
-        if (!inPullNav) {
-        jQuery('#housing').animate({height: 0}, 500).children().hide();
-        }
-    });
-    
-    jQuery('#contact').hover(
-      function(){
-        jQuery('#contact img').attr({src: "http://webdev.stephband.info/images/icon_letter_on.png"});
-      },
-      function(){
-        jQuery('#contact img').attr({src: "http://webdev.stephband.info/images/icon_letter.png"});
-      }
-    );
-    
-    jQuery('#beer').hover(
-      function(){
-        jQuery('#beer img').attr({src: "http://webdev.stephband.info/images/icon_beer_on.png"});
-      },
-      function(){
-        jQuery('#beer img').attr({src: "http://webdev.stephband.info/images/icon_beer.png"});
-      }
-    );
-    
-    jQuery('body').click(function(){
-      //jQuery('#donate').hide();
-    });
-  	
 });
 
 </script>
