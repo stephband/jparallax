@@ -8,7 +8,8 @@
         "twitter": "stephband"
     },
     "dependencies": {
-        "jquery": ">=1.4.2"
+        "jquery": ">=1.4.2",
+        "jquery.event.frame": ">=1.1"
     },
     "licenses": [],
     "files": ["js/jquery.parallax.js"],
