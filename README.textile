@@ -4,6 +4,6 @@ h2. What does jquery.parallax do?
 
 jquery.parallax turns nodes into absolutely positioned layers that move in response to the mouse. Depending on their dimensions, and on the options passed in, these layers move at different rates, in a parallaxy kind of way.
 
-For demos and docs, see here:
+h2. Demos and docs
 
 <a href="http://stephband.info/jparallax/">stephband.info/jparallax/</a>
