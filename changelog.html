@@ -1,78 +1,59 @@
 <!DOCTYPE html>
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-<title>webdev.stephband.info</title>
-
-<link rel="icon" type="image/png" href="images/favicon.png" />
-
-<style type="text/css" media="screen, projection">
-
-  @import "http://webdev.stephband.info/css/reset.css";
-  @import "http://webdev.stephband.info/css/typography.css";
-  @import "http://webdev.stephband.info/css/style_light.css";
-  @import "css/jparallax.css";
-
-  h1 {
-    width: 532px; height: 0;
-    overflow: hidden;
-    padding-top: 78px;
-    background: url('http://webdev.stephband.info/images/logo_stephband_medcoalblue.png') no-repeat;
-  }
-
-  #parallax
-    {position:relative; overflow:hidden; width:60em; height:20em;}
-    
-  #pullnav
-    {position: absolute; top:0; left:648px; width:240px; padding-left:18px; padding-right:18px; padding-top:12px; padding-bottom:10px;
-     background: url('../images/bg_pulldown.png') bottom;}
-  #housing
-    /*{height:0px;}*/
-  #contact
-    {margin-right:0.5em; }
-    
-  #pullnav a:focus, #pullnav a:hover
-    {color: #222222; text-decoration: none;}
-  #pullnav a
-    {color: #505050;}
-  #pullnav form textarea
-    {width:240px; height:80px;}
-  #pullnav #donate input
-    {margin: 0 1.2em;}
-  #pullnav #donate
-    {display:none;}
-  #pullnav #message
-    {display:none;}
-  #pullnav #message .website
-    {display:none;}
-  #pullnav .error
-    {color:	#7d4819;}  
-
-</style>
-
-<!--[if lt IE 7]>
-<script type="text/javascript" src="js/jquery.ifixpng.js"></script>
-<script type="text/javascript">jQuery(document).ready(function(){ jQuery('img[@src$=.png]').ifixpng(); });</script>
-<![endif]-->
-<!--[if lt IE 8]>
-<style type="text/css">
-@import "css/style_ie.css";
-</style>
-<![endif]-->
-
+	<meta charset="utf-8" />
+	<meta name="author" content="" />
+	<meta name="description" content="" />
+	
+	<title>jQuery.parallax</title>
+	
+	<script>document.documentElement.className = 'js';</script>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+	<!-- Force latest IE rendering engine & Chrome Frame -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<!-- Make IE recognise HTML5 elements for styling -->
+	<!--[if lte IE 8]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<noscript>
+		<strong>Warning!</strong>
+		Your browser does not support HTML5 so some elements on this page are simulated using JScript. Unfortunately your browser has JScript disabled. Please enable it in order to display this page.
+	</noscript>
+	<![endif]-->
+	<!-- Disable image toolbar in IE6 -->
+	<!--[if lte IE 6]><meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+	
+	<link rel="icon" type="image/png" href="images/favicon.png" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	
+	<link rel="stylesheet" type="text/css" href="http://stephband.info/css/template.min.css" />
+	<link rel="stylesheet" type="text/css" href="http://stephband.info/css/template.theme.min.css" />
+	
+	<link rel="stylesheet" type="text/css" href="http://stephband.github.com/css/site.layout.css" />
+	<link rel="stylesheet" type="text/css" href="http://stephband.github.com/css/docs.classes.css" />
+	
+	<!--[if (lt IE 9)&(!IEMobile)]>
+	<link rel="stylesheet" href="http://stephband.info/css/template.layout.32em.css" media="all" />
+	<link rel="stylesheet" href="http://stephband.info/css/template.layout.48em.css" media="all" />
+	<![endif]-->
+	<!--[if lte IE 8]><link rel="stylesheet" href="http://stephband.infocss/template.ie.css" /><![endif]-->
+	<!--[if IE 8]><link rel="stylesheet" href="http://stephband.infocss/template.ie8.css" /><![endif]-->
+	<!--[if IE 7]><link rel="stylesheet" href="http://stephband.infocss/template.ie7.css" /><![endif]-->
+	<!--[if IE 6]><link rel="stylesheet" href="http://stephband.infocss/template.ie6.css" /><![endif]-->
+	
+	<link rel="stylesheet" href="css/jquery.parallax.css" />
 </head>
 
 <body>
+	<header class="site_header" id="page_header">
+		<div class="site_wrap wrap">
+			<a class="logo_thumb thumb" href="http://stephband.info" title="stephband" rel="index">
+				<h1>stephband.info</h1>
+			</a>
+		</div>
+	</header>
 
-<div id="header">
-  <a href="http://webdev.stephband.info/"><h1>webdev.stephband.info</h1></a>
-</div>
-
-<div id="content">
-    
+<div class="site_wrap wrap" id="content">
     <h2>jParallax</h2>
     <h3>Repository</h3>
     <ul>
@@ -184,13 +165,5 @@
   </ul>
 
 </div>
-
-<script type="text/javascript" src="js/jquery-nightly.js"></script>
-<script type="text/javascript" src="http://webdev.stephband.info/events/frame/js/jquery.event.frame.js"></script>
-<script type="text/javascript" src="js/jquery.jparallax.js"></script>
-
-
-
-
 </body>
 </html>
