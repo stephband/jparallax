@@ -1,5 +1,5 @@
-// jquery.jparallax.js
-// 1.0
+// jquery.parallax.js
+// 1.1
 // Stephen Band
 //
 // Project and documentation site:
@@ -13,11 +13,10 @@
 // webdev.stephband.info/events/frame/
 
 (function(jQuery, undefined) {
-	// Plugin name
-	var plugin = "parallax";
+	// Debug
+	var debug = true;
 	
 	// VAR
-	
 	var options = {
 	    	mouseport:	'body',    // jQuery object or selector of DOM node to use as mouse detector
 	    	xparallax:	true,      // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
@@ -43,7 +42,7 @@
 	    	percent:	/^\d+\s?%$/
 	    },
 	
-	    frameEvent = 'frame.'+plugin,
+	    frameEvent = 'frame.parallax',
 	
 	    abs = Math.abs,
 	
@@ -83,7 +82,7 @@
 			
 			// Pointer has arrived within the target thresholds
 			else if ((!parallax[0] || abs(pointer[0] - this.pointer[0]) < threshold[0]) &&
-			        (!parallax[1] || abs(pointer[1] - this.pointer[1]) < threshold[1])) {
+			         (!parallax[1] || abs(pointer[1] - this.pointer[1]) < threshold[1])) {
 				this.ontarget = true;
 				this.pointer = pointer;
 			}
@@ -167,15 +166,15 @@
 		
 		// Update mouseport dimensions on window resize
 		jQuery(window)
-		.bind('resize.'+plugin, self.updateSize)
-		.bind('resize.'+plugin, self.updatePos);
+		.bind('resize.parallax', self.updateSize)
+		.bind('resize.parallax', self.updatePos);
 		
 		// Detect entry and exit of mouse
 		elem
-		.bind('mouseenter.'+plugin, function(e){
+		.bind('mouseenter.parallax', function(e){
 			inside = 1;
 		})
-		.bind('mouseleave.'+plugin, function(e){
+		.bind('mouseleave.parallax', function(e){
 			inside = 2;
 			leaveCoords = [e.pageX, e.pageY];
 		});
@@ -303,15 +302,16 @@
 	
 	function update(e){
 		var elem = jQuery(this),
-		    global = e.data.global,
-		    local = e.data.local,
+		    global = e.data.global || e.data,
+		    local = e.data.local || elem.data('parallax'),
 		    port = global.port,
 		    mouse = global.mouse,
-		    localmouse = local.mouse,
-		    process = (global.timeStamp !== e.timeStamp);
+		    localmouse = local.mouse;
+		
+		if(debug) { console.log('jquery.parallax update'); }
 		
 		// Global objects have yet to be processed for this frame
-		if ( process ) {
+		if (global.timeStamp !== e.timeStamp) {
 			// Set timeStamp to current time
 			global.timeStamp = e.timeStamp;
 		
@@ -326,13 +326,11 @@
 		
 		// Layer has it's own mouse
 		if ( localmouse ) {
-		
 			// Process mouse
-			localmouse.update((local.freeze ? local.freeze.pointer : port.pointer), port.threshold);
+			localmouse.update( local.freeze ? local.freeze.pointer : port.pointer, port.threshold );
 		
 			// If it hits target
 			if ( localmouse.ontarget ) {
-				
 				delete local.mouse;
 		
 				// Stop animating frozen layers
@@ -357,14 +355,14 @@
 		local.layer.update(mouse.pointer);
 	}
 	
-	jQuery.fn[plugin] = function(o){
-		var global = jQuery.extend({}, jQuery.fn[plugin].options, o),
-			args = arguments,
-			layers = this,
-			optionsArray = [];
-		
+	jQuery.fn.parallax = function(o){
+		var global = jQuery.extend({}, jQuery.fn.parallax.options, o),
+		    args = arguments,
+		    layers = this,
+		    optionsArray = [];
+
 		if (undefined === jQuery.event.special.frame) {
-			throw "jquery.parallax requires jquery.event.frame.";
+			throw new Error("jquery.parallax requires jquery.event.frame.");
 		}
 
 		// Turn mouseport into jQuery obj
@@ -386,7 +384,7 @@
 			while (i--) {
 				layer = layers[i];
 				
-				if (!jQuery.data(layer, plugin).freeze) {
+				if (!jQuery.data(layer, 'parallax').freeze) {
 					jQuery.event.add(this, frameEvent, update, {
 						global: global,
 						local: optionsArray[i]
@@ -409,7 +407,7 @@
 			    	mouse: new Mouse(parseBool(layerOptions.xparallax), parseBool(layerOptions.yparallax), layerOptions.decay, layer.getPointer())
 			    };
 			
-			elem.data(plugin, local);
+			elem.data('parallax', local);
 			optionsArray.push(local);
 			
 			// Bind freeze and unfreeze actions directly to layers using
@@ -435,7 +433,7 @@
 				if (decay !== undefined) { local.mouse.decay = decay; }
 				
 				// Start animating
-				jQuery.event.add(this, frameEvent, update, e.data);
+				jQuery.event.add(this, frameEvent, update, global);
 			}, {
 				global: global,
 				local: local
@@ -465,7 +463,7 @@
 				elem.removeClass(options.freezeClass);
 				
 				// Start animating
-				jQuery.event.add(this, frameEvent, update, e.data);
+				jQuery.event.add(this, frameEvent, update, global);
 			}, {
 				global: global,
 				local: local
@@ -475,7 +473,7 @@
 	
 	// EXPOSE
 	
-	jQuery.fn[plugin].options = options;
+	jQuery.fn.parallax.options = options;
 	
 	// RUN
 	
@@ -487,4 +485,5 @@
 			pointer = [e.pageX, e.pageY];
 		});
 	});
+
 }(jQuery));
