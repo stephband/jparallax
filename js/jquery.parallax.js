@@ -369,7 +369,7 @@
 		// Initialise port values
 		resize();
 		
-		this.each(function(i) {
+		return this.each(function(i) {
 			var elem = jQuery(this),
 			    opts = args[i+1] ? jQuery.extend({}, options, args[i+1]) : options,
 			    decay    = opts.decay,
