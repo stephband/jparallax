@@ -129,11 +129,6 @@
 		return Timer;
 	})();
 	
-	
-	
-	
-	
-	
 	function parseCoord(x) {
 		return (rpercent.exec(x)) ? parseFloat(x)/100 : x;
 	}
@@ -141,7 +136,56 @@
 	function parseBool(x) {
 		return typeof x === "boolean" ? x : !!( parseFloat(x) ) ;
 	}
-
+	
+	function portData(port) {
+		var data = {
+		    	timer: new Timer(),
+		    	pointer: [0, 0]
+		    },
+		    size, offset;
+		
+		function updatePointer() {
+			data.pointer = getPointer(mouse, [true, true], offset, size);
+		}
+		
+		function resize() {
+			size = getSize(port);
+			offset = getOffset(port);
+			data.threshold = getThreshold(size);
+		}
+		
+		function mouseenter() {
+			data.timer.add(updatePointer);
+		}
+		
+		function mouseleave(e) {
+			data.timer.remove(updatePointer);
+			data.pointer = getPointer([e.pageX, e.pageY], [true, true], offset, size);
+		}
+		
+		win
+		.on('resize.parallax', resize);
+		
+		port
+		.on('mouseenter.parallax', mouseenter)
+		.on('mouseleave.parallax', mouseleave);
+		
+		resize();
+		
+		return data;
+	}
+	
+	function getData(elem, name, fn) {
+		var data = elem.data(name);
+		
+		if (!data) {
+			data = fn ? fn(elem) : {} ;
+			elem.data(name, data);
+		}
+		
+		return data;
+	}
+	
 	function getPointer(mouse, parallax, offset, size){
 		var pointer = [],
 		    x = 2;
@@ -156,7 +200,6 @@
 	
 	function getSize(elem) {
 		return [elem.width(), elem.height()];
-		/*self.threshold = [ 1/width, 1/height ];*/
 	}
 	
 	function getOffset(elem) {
@@ -334,54 +377,26 @@
 	jQuery.fn.parallax = function(o){
 		var options = jQuery.extend({}, jQuery.fn.parallax.options, o),
 		    args = arguments,
-		    port = options.mouseport instanceof jQuery ?
+		    elem = options.mouseport instanceof jQuery ?
 		    	options.mouseport :
-		    	jQuery(options.mouseport),
-		    portSize, portOffset, portThreshold, portPointer,
-		    timer = new Timer();
-		
-		function updatePointer() {
-			portPointer = getPointer(mouse, [true, true], portOffset, portSize);
-		}
-		
-		function resize() {
-			portSize = getSize(port);
-			portOffset = getOffset(port);
-			portThreshold = getThreshold(portSize);
-		}
-		
-		function mouseenter() {
-			timer.add(updatePointer);
-		}
-		
-		function mouseleave(e) {
-			timer.remove(updatePointer);
-			portPointer = getPointer([e.pageX, e.pageY], [true, true], portOffset, portSize);
-		}
-		
-		win
-		.on('resize.parallax', resize);
-		
-		port
-		.on('mouseenter.parallax', mouseenter)
-		.on('mouseleave.parallax', mouseleave);
-		
-		// Initialise port values
-		resize();
+		    	jQuery(options.mouseport) ,
+		    port = getData(elem, 'parallax_port', portData),
+		    timer = port.timer;
 		
 		return this.each(function(i) {
-			var elem = jQuery(this),
-			    opts = args[i+1] ? jQuery.extend({}, options, args[i+1]) : options,
-			    decay    = opts.decay,
-			    size     = layerSize(elem, opts.width, opts.height),
-			    origin   = layerOrigin(opts.xorigin, opts.yorigin),
-			    px       = layerPx(opts.xparallax, opts.yparallax),
-			    parallax = layerParallax(opts.xparallax, opts.yparallax, px),
-			    offset   = layerOffset(parallax, px, origin, size),
-			    position = layerPosition(px, origin),
-			    pointer  = layerPointer(elem, parallax, px, offset, size),
+			var elem      = jQuery(this),
+			    opts      = args[i + 1] ? jQuery.extend({}, options, args[i + 1]) : options,
+			    data      = getData(elem, 'parallax'),
+			    decay     = opts.decay,
+			    size      = layerSize(elem, opts.width, opts.height),
+			    origin    = layerOrigin(opts.xorigin, opts.yorigin),
+			    px        = layerPx(opts.xparallax, opts.yparallax),
+			    parallax  = layerParallax(opts.xparallax, opts.yparallax, px),
+			    offset    = layerOffset(parallax, px, origin, size),
+			    position  = layerPosition(px, origin),
+			    pointer   = layerPointer(elem, parallax, px, offset, size),
 			    pointerFn = pointerOffTarget,
-			    targetFn = targetInside;
+			    targetFn  = targetInside;
 			
 			function update(newPointer) {
 				var css = layerCss(parallax, px, offset, size, position, newPointer);
@@ -390,7 +405,8 @@
 			}
 			
 			function frame() {
-				pointerFn(portPointer, pointer, portThreshold, decay, parallax, targetFn, update);
+				console.log(port.pointer, pointer, port.threshold, decay, parallax, targetFn, update);
+				pointerFn(port.pointer, pointer, port.threshold, decay, parallax, targetFn, update);
 			}
 			
 			function targetInside() {
@@ -413,10 +429,9 @@
 				targetFn = targetOutside;
 			}
 			
-			port
+			elem
 			.on('mouseenter.parallax', mouseenter)
 			.on('mouseleave.parallax', mouseleave);
-			
 			
 			/*function freeze() {
 				freeze = true;
@@ -428,6 +443,14 @@
 			
 			/*jQuery.event.add(this, 'freeze.parallax', freeze);
 			jQuery.event.add(this, 'unfreeze.parallax', unfreeze);*/
+		});
+	};
+	
+	jQuery.fn.unparallax = function() {
+		return this.each(function() {
+			var data = jQuery(data, 'parallax');
+			
+			if (data) { data.destoy(); }
 		});
 	};
 	
