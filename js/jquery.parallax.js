@@ -139,10 +139,25 @@
 	
 	function portData(port) {
 		var data = {
+		    	elem: port,
 		    	timer: new Timer(),
-		    	pointer: [0, 0]
+		    	add: function(node) {
+		    		layers = layers ? layers.add(node) : jQuery(node) ;
+		    	},
+		    	remove: function(node) {
+		    		// Remove this elem from port.layers
+		    		layers = layers.not(node);
+		    		
+		    		console.log(layers.length, node);
+		    		
+		    		// If port.layers is empty, destroy the port
+		    		if (layers.length === 0) {
+		    			removeBindings();
+		    			removeData();
+		    		}
+		    	}
 		    },
-		    size, offset;
+		    layers, size, offset;
 		
 		function updatePointer() {
 			data.pointer = getPointer(mouse, [true, true], offset, size);
@@ -163,13 +178,29 @@
 			data.pointer = getPointer([e.pageX, e.pageY], [true, true], offset, size);
 		}
 		
-		win
-		.on('resize.parallax', resize);
+		function addBindings() {
+			win
+			.on('resize.parallax', resize);
 		
-		port
-		.on('mouseenter.parallax', mouseenter)
-		.on('mouseleave.parallax', mouseleave);
+			port
+			.on('mouseenter.parallax', mouseenter)
+			.on('mouseleave.parallax', mouseleave);
+		}
 		
+		function removeBindings() {
+			win
+			.off('resize', resize);
+			
+			port
+			.off('mouseenter', mouseenter)
+			.off('mouseleave', mouseleave);
+		}
+		
+		function removeData() {
+			port.removeData();
+		}
+		
+		addBindings();
 		resize();
 		
 		return data;
@@ -384,7 +415,8 @@
 		    timer = port.timer;
 		
 		return this.each(function(i) {
-			var elem      = jQuery(this),
+			var node      = this,
+			    elem      = jQuery(this),
 			    opts      = args[i + 1] ? jQuery.extend({}, options, args[i + 1]) : options,
 			    data      = getData(elem, 'parallax'),
 			    decay     = opts.decay,
@@ -398,22 +430,23 @@
 			    pointerFn = pointerOffTarget,
 			    targetFn  = targetInside;
 			
-			function update(newPointer) {
+			function updateCss(newPointer) {
 				var css = layerCss(parallax, px, offset, size, position, newPointer);
 				elem.css(css);
 				pointer = newPointer;
 			}
 			
 			function frame() {
-				console.log(port.pointer, pointer, port.threshold, decay, parallax, targetFn, update);
-				pointerFn(port.pointer, pointer, port.threshold, decay, parallax, targetFn, update);
+				pointerFn(port.pointer, pointer, port.threshold, decay, parallax, targetFn, updateCss);
 			}
 			
 			function targetInside() {
+				// Pointer hits the target pointer inside the port
 				pointerFn = pointerOnTarget;
 			}
 			
 			function targetOutside() {
+				// Pointer hits the target pointer outside the port
 				timer.remove(frame);
 			}
 			
@@ -425,13 +458,49 @@
 			}
 			
 			function mouseleave(e) {
+				// Make the layer come to rest at it's limit with inertia
 				pointerFn = pointerOffTarget;
+				// Stop the timer when the the pointer hits target
 				targetFn = targetOutside;
 			}
 			
-			elem
+			if (data) {
+				console.log('SETUP parallax again');
+				elem.unparallax();
+			}
+			
+			port.elem
 			.on('mouseenter.parallax', mouseenter)
 			.on('mouseleave.parallax', mouseleave);
+			
+			port.add(this);
+			
+			elem.data('parallax', {
+				destroy: function(removeStyle) {
+					var css;
+					
+					port.elem
+					.off('mouseenter', mouseenter)
+					.off('mouseleave', mouseleave);
+					
+					port.remove(node);
+					elem.removeData('parallax');
+					
+					if (removeStyle) {
+						css = {};
+						
+						if (parallax[0]) {
+							css.left = '';
+							css.marginLeft = '';
+						}
+						
+						if (parallax[1]) {
+							css.top = '';
+							css.marginTop = '';
+						}
+					};
+				}
+			});
 			
 			/*function freeze() {
 				freeze = true;
@@ -446,11 +515,14 @@
 		});
 	};
 	
-	jQuery.fn.unparallax = function() {
+	jQuery.fn.unparallax = function(removeStyle) {
 		return this.each(function() {
-			var data = jQuery(data, 'parallax');
+			var data = jQuery.data(this, 'parallax');
 			
-			if (data) { data.destoy(); }
+			// This elem is not parallaxed
+			if (!data) { return; }
+			
+			data.destroy(removeStyle);
 		});
 	};
 	
