@@ -138,24 +138,18 @@
 	}
 	
 	function portData(port) {
-		var data = {
+		var events = {
+		    	'mouseenter.parallax': mouseenter,
+		    	'mouseleave.parallax': mouseleave
+		    },
+		    winEvents = {
+		    	'resize.parallax': resize
+		    },
+		    data = {
 		    	elem: port,
-		    	timer: new Timer(),
-		    	add: function(node) {
-		    		layers = layers ? layers.add(node) : jQuery(node) ;
-		    	},
-		    	remove: function(node) {
-		    		// Remove this elem from port.layers
-		    		layers = layers.not(node);
-		    		
-		    		console.log(layers.length, node);
-		    		
-		    		// If port.layers is empty, destroy the port
-		    		if (layers.length === 0) {
-		    			removeBindings();
-		    			removeData();
-		    		}
-		    	}
+		    	events: events,
+		    	winEvents: winEvents,
+		    	timer: new Timer()
 		    },
 		    layers, size, offset;
 		
@@ -177,30 +171,10 @@
 			data.timer.remove(updatePointer);
 			data.pointer = getPointer([e.pageX, e.pageY], [true, true], offset, size);
 		}
+
+		win.on(winEvents);
+		port.on(events);
 		
-		function addBindings() {
-			win
-			.on('resize.parallax', resize);
-		
-			port
-			.on('mouseenter.parallax', mouseenter)
-			.on('mouseleave.parallax', mouseleave);
-		}
-		
-		function removeBindings() {
-			win
-			.off('resize', resize);
-			
-			port
-			.off('mouseenter', mouseenter)
-			.off('mouseleave', mouseleave);
-		}
-		
-		function removeData() {
-			port.removeData();
-		}
-		
-		addBindings();
 		resize();
 		
 		return data;
@@ -404,6 +378,38 @@
 		return updateFn(targetPointer);
 	}
 	
+	function unport(elem, events, winEvents) {
+		elem.off(events).removeData('parallax_port');
+		win.off(winEvents);
+	}
+	
+	function unparallax(node, port, events) {
+		port.elem.off(events);
+		
+		// Remove this node from layers
+		port.layers = port.layers.not(node);
+		
+		// If port.layers is empty, destroy the port
+		if (port.layers.length === 0) {
+			unport(port.elem, port.events, port.winEvents);
+		}
+	}
+	
+	function unstyle(parallax) {
+		var css = {};
+		
+		if (parallax[0]) {
+			css.left = '';
+			css.marginLeft = '';
+		}
+		
+		if (parallax[1]) {
+			css.top = '';
+			css.marginTop = '';
+		}
+		
+		elem.css(css);
+	}
 	
 	jQuery.fn.parallax = function(o){
 		var options = jQuery.extend({}, jQuery.fn.parallax.options, o),
@@ -418,7 +424,6 @@
 			var node      = this,
 			    elem      = jQuery(this),
 			    opts      = args[i + 1] ? jQuery.extend({}, options, args[i + 1]) : options,
-			    data      = getData(elem, 'parallax'),
 			    decay     = opts.decay,
 			    size      = layerSize(elem, opts.width, opts.height),
 			    origin    = layerOrigin(opts.xorigin, opts.yorigin),
@@ -428,7 +433,21 @@
 			    position  = layerPosition(px, origin),
 			    pointer   = layerPointer(elem, parallax, px, offset, size),
 			    pointerFn = pointerOffTarget,
-			    targetFn  = targetInside;
+			    targetFn  = targetInside,
+			    events = {
+			    	'mouseenter.parallax': function mouseenter(e) {
+			    		pointerFn = pointerOffTarget;
+			    		targetFn = targetInside;
+			    		timer.add(frame);
+			    		timer.start();
+			    	},
+			    	'mouseleave.parallax': function mouseleave(e) {
+			    		// Make the layer come to rest at it's limit with inertia
+			    		pointerFn = pointerOffTarget;
+			    		// Stop the timer when the the pointer hits target
+			    		targetFn = targetOutside;
+			    	}
+			    };
 			
 			function updateCss(newPointer) {
 				var css = layerCss(parallax, px, offset, size, position, newPointer);
@@ -450,57 +469,19 @@
 				timer.remove(frame);
 			}
 			
-			function mouseenter(e) {
-				pointerFn = pointerOffTarget;
-				targetFn = targetInside;
-				timer.add(frame);
-				timer.start();
-			}
 			
-			function mouseleave(e) {
-				// Make the layer come to rest at it's limit with inertia
-				pointerFn = pointerOffTarget;
-				// Stop the timer when the the pointer hits target
-				targetFn = targetOutside;
-			}
-			
-			if (data) {
-				console.log('SETUP parallax again');
+			if (jQuery.data(node, 'parallax')) {
 				elem.unparallax();
 			}
 			
-			port.elem
-			.on('mouseenter.parallax', mouseenter)
-			.on('mouseleave.parallax', mouseleave);
-			
-			port.add(this);
-			
-			elem.data('parallax', {
-				destroy: function(removeStyle) {
-					var css;
-					
-					port.elem
-					.off('mouseenter', mouseenter)
-					.off('mouseleave', mouseleave);
-					
-					port.remove(node);
-					elem.removeData('parallax');
-					
-					if (removeStyle) {
-						css = {};
-						
-						if (parallax[0]) {
-							css.left = '';
-							css.marginLeft = '';
-						}
-						
-						if (parallax[1]) {
-							css.top = '';
-							css.marginTop = '';
-						}
-					};
-				}
+			jQuery.data(node, 'parallax', {
+				port: port,
+				events: events,
+				parallax: parallax
 			});
+			
+			port.elem.on(events);
+			port.layers = port.layers? port.layers.add(node): jQuery(node);
 			
 			/*function freeze() {
 				freeze = true;
@@ -515,14 +496,16 @@
 		});
 	};
 	
-	jQuery.fn.unparallax = function(removeStyle) {
+	jQuery.fn.unparallax = function(bool) {
 		return this.each(function() {
 			var data = jQuery.data(this, 'parallax');
 			
 			// This elem is not parallaxed
 			if (!data) { return; }
 			
-			data.destroy(removeStyle);
+			jQuery.removeData(this, 'parallax');
+			unparallax(this, data.port, data.events);
+			if (bool) { unstyle(data.parallax); }
 		});
 	};
 	
