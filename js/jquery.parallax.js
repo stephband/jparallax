@@ -1,5 +1,5 @@
-// jquery.jparallax.js
-// 1.0
+// jquery.parallax.js
+// 2.0
 // Stephen Band
 //
 // Project and documentation site:
@@ -7,27 +7,20 @@
 //
 // Repository:
 // github.com/stephband/jparallax
-//
-// Dependencies:
-// jquery.event.frame
-// webdev.stephband.info/events/frame/
 
 (function(jQuery, undefined) {
-
-	// Plugin name
-	var plugin = "parallax";
-	
 	// VAR
-	
-	var options = {
-	    	mouseport:	'body',    // jQuery object or selector of DOM node to use as mouse detector
-	    	xparallax:	true,      // boolean | 0-1 | 'npx' | 'n%' - Sets axis of reaction and by how much they react
-	    	yparallax:	true,      //
-	    	xorigin:		0.5,       // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
-	    	yorigin:		0.5,       //
-	    	decay:			0.66,      // 0-1 (0 instant, 1 forever) - Sets rate of decay curve for catching up with target mouse position
-	    	frameDuration:	30,    // Int (milliseconds)
-	    	freezeClass:	'freeze' // String - Class added to layer when frozen
+	var debug = true,
+	    
+	    options = {
+	    	mouseport:     'body',  // jQuery object or selector of DOM node to use as mouseport
+	    	xparallax:     true,    // boolean | 0-1 | 'npx' | 'n%'
+	    	yparallax:     true,    //
+	    	xorigin:       0.5,     // 0-1 - Sets default alignment. Only has effect when parallax values are something other than 1 (or true, or '100%')
+	    	yorigin:       0.5,     //
+	    	decay:         0.66,    // 0-1 (0 instant, 1 forever) - Sets rate of decay curve for catching up with target mouse position
+	    	frameDuration: 30,      // Int (milliseconds)
+	    	freezeClass:   'freeze' // String - Class added to layer when frozen
 	    },
 	
 	    value = {
@@ -39,455 +32,488 @@
 	    	bottom: 1
 	    },
 	
-	    regex = {
-	    	px:			/^\d+\s?px$/,
-	    	percent:	/^\d+\s?%$/
-	    },
+	    rpx = /^\d+\s?px$/,
+	    rpercent = /^\d+\s?%$/,
+	    
+	    win = jQuery(window),
+	    doc = jQuery(document),
+	    mouse = [0, 0];
 	
-	    frameEvent = 'frame.'+plugin,
+	var Timer = (function(){
+		var debug = false;
+		
+		// Shim for requestAnimationFrame, falling back to timer. See:
+		// see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+		var requestFrame = (function(){
+		    	return (
+		    		window.requestAnimationFrame ||
+		    		window.webkitRequestAnimationFrame ||
+		    		window.mozRequestAnimationFrame ||
+		    		window.oRequestAnimationFrame ||
+		    		window.msRequestAnimationFrame ||
+		    		function(fn, node){
+		    			return window.setTimeout(function(){
+		    				fn();
+		    			}, 25);
+		    		}
+		    	);
+		    })();
+		
+		function Timer() {
+			var callbacks = [],
+				nextFrame;
+			
+			function noop() {}
+			
+			function frame(){
+				var cbs = callbacks.slice(0),
+				    l = cbs.length,
+				    i = -1;
+				
+				if (debug) { console.log('timer frame()', l); }
+				
+				while(++i < l) { cbs[i].call(this); }
+				requestFrame(nextFrame);
+			}
+			
+			function start() {
+				if (debug) { console.log('timer start()'); }
+				this.start = noop;
+				this.stop = stop;
+				nextFrame = frame;
+				requestFrame(nextFrame);
+			}
+			
+			function stop() {
+				if (debug) { console.log('timer stop()'); }
+				this.start = start;
+				this.stop = noop;
+				nextFrame = noop;
+			}
+			
+			this.callbacks = callbacks;
+			this.start = start;
+			this.stop = stop;
+		}
+
+		Timer.prototype = {
+			add: function(fn) {
+				var callbacks = this.callbacks,
+				    l = callbacks.length;
+				
+				// Check to see if this callback is already in the list.
+				// Don't add it twice.
+				while (l--) {
+					if (callbacks[l] === fn) { return; }
+				}
+				
+				this.callbacks.push(fn);
+				if (debug) { console.log('timer add()', this.callbacks.length); }
+			},
+		
+			remove: function(fn) {
+				var callbacks = this.callbacks,
+				    l = callbacks.length;
+				
+				// Remove all instances of this callback.
+				while (l--) {
+					if (callbacks[l] === fn) { callbacks.splice(l, 1); }
+				}
+				
+				if (debug) { console.log('timer remove()', this.callbacks.length); }
+				
+				if (callbacks.length === 0) { this.stop(); }
+			}
+		};
+		
+		return Timer;
+	})();
 	
-	    abs = Math.abs,
+	function parseCoord(x) {
+		return (rpercent.exec(x)) ? parseFloat(x)/100 : x;
+	}
 	
-	    pointer = [0, 0];
-	
-	// FUNCTIONS
-	
-	function parseValue(value) { return this.lib[value]; }
-	parseValue.lib = value;
-	
-	// Converts numbers or numbers in strings to boolean
 	function parseBool(x) {
 		return typeof x === "boolean" ? x : !!( parseFloat(x) ) ;
 	}
 	
-	function parseCoord(x) {
-		return (regex.percent.exec(x)) ? parseFloat(x)/100 : x;
-	}
-	
-	// CONSTRUCTORS
-	
-	function Mouse(xparallax, yparallax, decay, pointer){
+	function portData(port) {
+		var events = {
+		    	'mouseenter.parallax': mouseenter,
+		    	'mouseleave.parallax': mouseleave
+		    },
+		    winEvents = {
+		    	'resize.parallax': resize
+		    },
+		    data = {
+		    	elem: port,
+		    	events: events,
+		    	winEvents: winEvents,
+		    	timer: new Timer()
+		    },
+		    layers, size, offset;
 		
-		// Convert parallax options to boolean values
-		var parallax = [xparallax, yparallax];
-		
-		this.ontarget = false;
-		this.decay = decay;
-		this.pointer = pointer || [0.5, 0.5];
-		this.update = function(pointer, threshold){
-			var lagPointer, x;
-			
-			// Pointer is already on target
-			if (this.ontarget) {
-				this.pointer = pointer;
-			}
-			
-			// Pointer has arrived within the target thresholds
-			else if ((!parallax[0] || abs(pointer[0] - this.pointer[0]) < threshold[0]) &&
-			        (!parallax[1] || abs(pointer[1] - this.pointer[1]) < threshold[1])) {
-				this.ontarget = true;
-				this.pointer = pointer;
-			}
-			
-			// Pointer is nowhere near the target
-			else {
-				lagPointer = [];
-				x = 2;
-				
-				while (x--) {
-					if ( parallax[x] ) {
-						lagPointer[x] = pointer[x] + this.decay * (this.pointer[x] - pointer[x]);
-					}
-				}
-				
-				this.pointer = lagPointer;
-			}
-		};
-	}
-	
-	function Port(object, options){
-		var self = this,
-			elem = object instanceof jQuery ? object : jQuery(object) ,
-			// Convert parallax options to boolean values
-			parallax = [parseBool(options.xparallax), parseBool(options.yparallax)],
-			// State of mouse position (0 - outside, 1 - inside, 2 - just gone outside)
-			inside = 0,
-			// Stores mouse position on mouseleave event
-			leaveCoords;
-		
-		this.pointer = [0, 0];
-		this.active = false;
-		this.activeOutside = (options && options.activeOutside) || false;
-		this.update = function(coords){
-			var pos = this.pos,
-				size = this.size,
-				pointer = [],
-				x = 2;
-			
-			// Is mouse inside port?
-			// Yes.
-			if ( inside > 0 ) {
-				// But it just went outside, so make this the last move
-				// Use leaveCoords stored by mouseleave event
-				if ( inside === 2 ) {
-					inside = 0;
-					if (leaveCoords) {
-						coords = leaveCoords
-					};
-				}
-				
-				while (x--) {
-					if ( parallax[x] ) {
-						pointer[x] = (coords[x] - pos[x]) / size[x] ;
-						pointer[x] = pointer[x] < 0 ? 0 : pointer[x] > 1 ? 1 : pointer[x] ;
-					}
-				}
-				
-				this.active = true;
-				this.pointer = pointer;
-			}
-			// No.
-			else {
-				this.active = false;
-			}
-		};
-		this.updateSize = function(){
-			var width = elem.width(),
-				height = elem.height();
-			
-			self.size = [width, height];
-			self.threshold = [ 1/width, 1/height ];
-		};
-		this.updatePos = function(){
-			var offset = elem.offset() || {left: 0, top: 0},
-				left = parseInt(elem.css('borderLeftWidth')) + parseInt(elem.css('paddingLeft')),
-				top = parseInt(elem.css('borderTopWidth')) + parseInt(elem.css('paddingTop'));
-			
-			self.pos = [offset.left + left, offset.top + top];
-		};
-		
-		// Update mouseport dimensions on window resize
-		jQuery(window)
-		.bind('resize.'+plugin, self.updateSize)
-		.bind('resize.'+plugin, self.updatePos);
-		
-		// Detect entry and exit of mouse
-		elem
-		.bind('mouseenter.'+plugin, function(e){
-			inside = 1;
-		})
-		.bind('mouseleave.'+plugin, function(e){
-			inside = 2;
-			leaveCoords = [e.pageX, e.pageY];
-		});
-		
-		// Set up layer
-		this.updateSize();
-		this.updatePos();
-	}
-	
-	function Layer(elem, options){
-		var px = [],
-		    parallax = [],
-		    offset = [],
-		    position = [];
-	
-		this.update = function(pointer){
-			var pos = [],
-			    cssPosition,
-			    cssMargin,
-			    x = 2,
-			    css = {};
-			
-			while (x--) {
-				if ( parallax[x] ) {
-					pos[x] = parallax[x] * pointer[x] + offset[x];
-					
-					// We're working in pixels
-					if ( px[x] ) {
-						cssPosition = position[x];
-						cssMargin = pos[x] * -1;
-					}
-					// We're working by ratio
-					else {
-						cssPosition = pos[x] * 100 + '%';
-						cssMargin = pos[x] * this.size[x] * -1;
-					}
-					
-					// Fill in css object
-					if ( x === 0 ) {
-						css.left = cssPosition;
-						css.marginLeft = cssMargin;
-					}
-					else {
-						css.top = cssPosition;
-						css.marginTop = cssMargin;
-					}
-				}
-			}
-			
-			// Set css
-			elem.css(css);
-		};
-	
-		this.setParallax = function(xp, yp, xo, yo){
-			var p = [ xp || options.xparallax, yp || options.yparallax ],
-			    origin = [ xo || options.xorigin, yo || options.yorigin ],
-			    i = 2,
-			    css = {};
-			
-			while (i--) {
-				// Set px flag
-				px[i] = regex.px.test(p[i]);
-				
-				// Convert origin to numbers
-				if (typeof origin[i] === 'string') {
-					origin[i] = origin[i] === undefined ? 1 :
-								value[ origin[i] ] || parseCoord(origin[i]) ;
-				}
-				
-				// We're dealing with pixel dimensions
-				if ( px[i] ) {
-					// Set parallax
-					parallax[i] = parseInt(p[i]);
-					
-					// Set offset
-					offset[i] = origin[i] * ( this.size[i] - parallax[i] );
-					
-					// Set css position constant
-					position[i] = origin[i] * 100 + '%';
-				}
-				
-				// We're dealing with ratios
-				else {
-					// Set parallax, converting to ratio where necessary
-					parallax[i] = p[i] === true ? 1 : parseCoord(p[i]);
-					
-					// Set offset
-					offset[i] = parallax[i] ? origin[i] * ( 1 - parallax[i] ) : 0 ;
-				}
-			}
-		};
-	
-		this.getPointer = function(){
-			var viewport = elem.offsetParent(),
-				pos = elem.position(),
-				position = [],
-				pointer = [],
-				i = 2;
-				
-			// Reverse calculate ratio from layer's current position
-			while (i--) {
-				if ( px[i] ) {
-					// TODO: reverse calculation for pixel case
-					position[i] = 0;
-				}
-				else {
-					position[i] = pos[ i === 0 ? 'left' : 'top' ] / (viewport[ i === 0 ? 'outerWidth' : 'outerHeight' ]() - this.size[i]) ;
-				}
-				
-				pointer[i] = (position[i] - offset[i]) / parallax[i] ;
-			}
-			
-			return pointer;
-		};
-	
-		this.setSize = function(x, y){
-			this.size = [ x || elem.outerWidth(), y || elem.outerHeight() ];
-		};
-		
-		this.setSize(options.width, options.height);
-		this.setParallax(options.xparallax, options.yparallax, options.xorigin, options.yorigin);
-	}
-	
-	// EVENT HANDLERS
-	
-	function update(e){
-		
-		var elem = jQuery(this),
-		    global = e.data.global || e.data,
-		    local = e.data.local || elem.data(plugin),
-		    port = global.port,
-		    mouse = global.mouse,
-		    localmouse = local.mouse,
-		    process = global.timeStamp !== e.timeStamp;
-		
-		// Global objects have yet to be processed for this frame
-		if ( process ) {
-			// Set timeStamp to current time
-			global.timeStamp = e.timeStamp;
-		
-			// Process mouseport
-			port.update(pointer);
-			
-			// Process mouse
-			if ( port.active || !mouse.ontarget ) {
-				mouse.update(port.pointer, port.threshold);
-			}
+		function updatePointer() {
+			data.pointer = getPointer(mouse, [true, true], offset, size);
 		}
 		
-		// Layer has it's own mouse
-		if ( localmouse ) {
-		
-			// Process mouse
-			localmouse.update( local.freeze ? local.freeze.pointer : port.pointer, port.threshold );
-		
-			// If it hits target
-			if ( localmouse.ontarget ) {
-				
-				delete local.mouse;
-		
-				// Stop animating frozen layers
-				if (local.freeze) {
-					elem
-					.unbind(frameEvent)
-					.addClass(global.freezeClass);
-				}
-			}
-			
-			// Use localmouse in place of mouse
-			mouse = localmouse;
-		}
-		// Layer is responding to global mouse
-		else {
-			// When no longer active, unbind
-			if ( mouse.ontarget && !port.active ) {
-				elem.unbind(frameEvent);
-			}
+		function resize() {
+			size = getSize(port);
+			offset = getOffset(port);
+			data.threshold = getThreshold(size);
 		}
 		
-		local.layer.update(mouse.pointer);
-	}
-	
-	jQuery.fn[plugin] = function(o){
-		var global = jQuery.extend({}, jQuery.fn[plugin].options, o),
-			args = arguments,
-			layers = this,
-			optionsArray = [];
+		function mouseenter() {
+			data.timer.add(updatePointer);
+		}
 		
-		if (undefined === jQuery.event.special.frame) {
-			throw "jquery.parallax requires jquery.event.frame.";
+		function mouseleave(e) {
+			data.timer.remove(updatePointer);
+			data.pointer = getPointer([e.pageX, e.pageY], [true, true], offset, size);
 		}
 
-		// Turn mouseport into jQuery obj
-		if ( !(global.mouseport instanceof jQuery) ) {
-			global.mouseport = jQuery(global.mouseport); 
+		win.on(winEvents);
+		port.on(events);
+		
+		resize();
+		
+		return data;
+	}
+	
+	function getData(elem, name, fn) {
+		var data = elem.data(name);
+		
+		if (!data) {
+			data = fn ? fn(elem) : {} ;
+			elem.data(name, data);
 		}
 		
-		global.port = new Port(global.mouseport, global);
-		global.mouse = new Mouse(parseBool(global.xparallax), parseBool(global.yparallax), global.decay);
+		return data;
+	}
+	
+	function getPointer(mouse, parallax, offset, size){
+		var pointer = [],
+		    x = 2;
 		
-		global.mouseport
-		.bind("mouseenter", function(e){
-			var i = layers.length,
-			    layer;
-			
-			global.mouse.ontarget = false;
-			
-			// Animate unfrozen layers
-			while (i--) {
-				layer = layers[i];
-				
-				if (!jQuery.data(layer, plugin).freeze) {
-					jQuery.event.add(this, frameEvent, update, {
-						global: global,
-						local: optionsArray[i]
-					});
-				};
+		while (x--) {
+			pointer[x] = (mouse[x] - offset[x]) / size[x] ;
+			pointer[x] = pointer[x] < 0 ? 0 : pointer[x] > 1 ? 1 : pointer[x] ;
+		}
+		
+		return pointer;
+	}
+	
+	function getSize(elem) {
+		return [elem.width(), elem.height()];
+	}
+	
+	function getOffset(elem) {
+		var offset = elem.offset() || {left: 0, top: 0},
+			borderLeft = elem.css('borderLeftStyle') === 'none' ? 0 : parseInt(elem.css('borderLeftWidth'), 10),
+			borderTop = elem.css('borderTopStyle') === 'none' ? 0 : parseInt(elem.css('borderTopWidth'), 10),
+			paddingLeft = parseInt(elem.css('paddingLeft'), 10),
+			paddingTop = parseInt(elem.css('paddingTop'), 10);
+		
+		return [offset.left + borderLeft + paddingLeft, offset.top + borderTop + paddingTop];
+	}
+	
+	function getThreshold(size) {
+		return [1/size[0], 1/size[1]];
+	}
+	
+	function layerSize(elem, x, y) {
+		return [x || elem.outerWidth(), y || elem.outerHeight()];
+	}
+	
+	function layerOrigin(xo, yo) {
+		var o = [xo, yo],
+			i = 2,
+			origin = [];
+		
+		while (i--) {
+			origin[i] = typeof o[i] === 'string' ?
+				o[i] === undefined ?
+					1 :
+					value[origin[i]] || parseCoord(origin[i]) :
+				o[i] ;
+		}
+		
+		return origin;
+	}
+	
+	function layerPx(xp, yp) {
+		return [rpx.test(xp), rpx.test(yp)];
+	}
+	
+	function layerParallax(xp, yp, px) {
+		var p = [xp, yp],
+		    i = 2,
+		    parallax = [];
+		
+		while (i--) {
+			parallax[i] = px[i] ?
+				parseInt(p[i], 10) :
+				parallax[i] = p[i] === true ? 1 : parseCoord(p[i]) ;
+		}
+		
+		return parallax;
+	}
+	
+	function layerOffset(parallax, px, origin, size) {
+		var i = 2,
+		    offset = [];
+		
+		while (i--) {
+			offset[i] = px[i] ?
+				origin[i] * (size[i] - parallax[i]) :
+				parallax[i] ? origin[i] * ( 1 - parallax[i] ) : 0 ;
+		}
+		
+		return offset;
+	}
+	
+	function layerPosition(px, origin) {
+		var i = 2,
+		    position = [];
+		
+		while (i--) {
+			if (px[i]) {
+				// Set css position constant
+				position[i] = origin[i] * 100 + '%';
 			}
-		});
+			else {
+			
+			}
+		}
 		
-		return layers.each(function(i){
-			var elem = jQuery(this),
-			    
-			    // Construct layer options from extra arguments
-			    layerOptions = args[i+1] ? jQuery.extend({}, global, args[i+1]) : global ,
-			    
-			    // Set up layer data. Give it a local mouse 
-			    // initialises it to start smoothly from current position
-			    layer = new Layer(elem, layerOptions),
-			    local = {
-			    	layer: layer,
-			    	mouse: new Mouse(parseBool(layerOptions.xparallax), parseBool(layerOptions.yparallax), layerOptions.decay, layer.getPointer())
+		return position;
+	}
+	
+	function layerPointer(elem, parallax, px, offset, size) {
+		var viewport = elem.offsetParent(),
+			pos = elem.position(),
+			position = [],
+			pointer = [],
+			i = 2;
+		
+		// Reverse calculate ratio from elem's current position
+		while (i--) {
+			position[i] = px[i] ?
+				// TODO: reverse calculation for pixel case
+				0 :
+				pos[i === 0 ? 'left' : 'top'] / (viewport[i === 0 ? 'outerWidth' : 'outerHeight']() - size[i]) ;
+			
+			pointer[i] = (position[i] - offset[i]) / parallax[i] ;
+		}
+		
+		return pointer;
+	}
+	
+	function layerCss(parallax, px, offset, size, position, pointer) {
+		var pos = [],
+		    cssPosition,
+		    cssMargin,
+		    x = 2,
+		    css = {};
+		
+		while (x--) {
+			if (parallax[x]) {
+				pos[x] = parallax[x] * pointer[x] + offset[x];
+				
+				// We're working in pixels
+				if (px[x]) {
+					cssPosition = position[x];
+					cssMargin = pos[x] * -1;
+				}
+				// We're working by ratio
+				else {
+					cssPosition = pos[x] * 100 + '%';
+					cssMargin = pos[x] * size[x] * -1;
+				}
+				
+				// Fill in css object
+				if (x === 0) {
+					css.left = cssPosition;
+					css.marginLeft = cssMargin;
+				}
+				else {
+					css.top = cssPosition;
+					css.marginTop = cssMargin;
+				}
+			}
+		}
+		
+		return css;
+	}
+	
+	function pointerOffTarget(targetPointer, prevPointer, threshold, decay, parallax, targetFn, updateFn) {
+		var pointer, x;
+		
+		if ((!parallax[0] || Math.abs(targetPointer[0] - prevPointer[0]) < threshold[0]) &&
+		    (!parallax[1] || Math.abs(targetPointer[1] - prevPointer[1]) < threshold[1])) {
+		    // Pointer has hit the target
+		    if (targetFn) { targetFn(); }
+		    return updateFn(targetPointer);
+		}
+		
+		// Pointer is nowhere near the target
+		pointer = [];
+		x = 2;
+		
+		while (x--) {
+			if (parallax[x]) {
+				pointer[x] = targetPointer[x] + decay * (prevPointer[x] - targetPointer[x]);
+			}
+		}
+			
+		return updateFn(pointer);
+	}
+	
+	function pointerOnTarget(targetPointer, prevPointer, threshold, decay, parallax, targetFn, updateFn) {
+		// Don't bother updating if the pointer hasn't changed.
+		if (targetPointer[0] === prevPointer[0] && targetPointer[1] === prevPointer[1]) {
+			return;
+		}
+		
+		return updateFn(targetPointer);
+	}
+	
+	function unport(elem, events, winEvents) {
+		elem.off(events).removeData('parallax_port');
+		win.off(winEvents);
+	}
+	
+	function unparallax(node, port, events) {
+		port.elem.off(events);
+		
+		// Remove this node from layers
+		port.layers = port.layers.not(node);
+		
+		// If port.layers is empty, destroy the port
+		if (port.layers.length === 0) {
+			unport(port.elem, port.events, port.winEvents);
+		}
+	}
+	
+	function unstyle(parallax) {
+		var css = {};
+		
+		if (parallax[0]) {
+			css.left = '';
+			css.marginLeft = '';
+		}
+		
+		if (parallax[1]) {
+			css.top = '';
+			css.marginTop = '';
+		}
+		
+		elem.css(css);
+	}
+	
+	jQuery.fn.parallax = function(o){
+		var options = jQuery.extend({}, jQuery.fn.parallax.options, o),
+		    args = arguments,
+		    elem = options.mouseport instanceof jQuery ?
+		    	options.mouseport :
+		    	jQuery(options.mouseport) ,
+		    port = getData(elem, 'parallax_port', portData),
+		    timer = port.timer;
+		
+		return this.each(function(i) {
+			var node      = this,
+			    elem      = jQuery(this),
+			    opts      = args[i + 1] ? jQuery.extend({}, options, args[i + 1]) : options,
+			    decay     = opts.decay,
+			    size      = layerSize(elem, opts.width, opts.height),
+			    origin    = layerOrigin(opts.xorigin, opts.yorigin),
+			    px        = layerPx(opts.xparallax, opts.yparallax),
+			    parallax  = layerParallax(opts.xparallax, opts.yparallax, px),
+			    offset    = layerOffset(parallax, px, origin, size),
+			    position  = layerPosition(px, origin),
+			    pointer   = layerPointer(elem, parallax, px, offset, size),
+			    pointerFn = pointerOffTarget,
+			    targetFn  = targetInside,
+			    events = {
+			    	'mouseenter.parallax': function mouseenter(e) {
+			    		pointerFn = pointerOffTarget;
+			    		targetFn = targetInside;
+			    		timer.add(frame);
+			    		timer.start();
+			    	},
+			    	'mouseleave.parallax': function mouseleave(e) {
+			    		// Make the layer come to rest at it's limit with inertia
+			    		pointerFn = pointerOffTarget;
+			    		// Stop the timer when the the pointer hits target
+			    		targetFn = targetOutside;
+			    	}
 			    };
 			
-			elem.data(plugin, local);
-			optionsArray.push(local);
+			function updateCss(newPointer) {
+				var css = layerCss(parallax, px, offset, size, position, newPointer);
+				elem.css(css);
+				pointer = newPointer;
+			}
 			
-			// Bind freeze and unfreeze actions directly to layers using
-			// jQuery.event.add(node, type, fn, data)
+			function frame() {
+				pointerFn(port.pointer, pointer, port.threshold, decay, parallax, targetFn, updateCss);
+			}
 			
-			jQuery.event.add(this, 'freeze', function(e){
-				var elem = jQuery(this),
-				    global = e.data.global,
-				    local = e.data.local,
-				    mouse = local.mouse || local.freeze || global.mouse,
-				    coords = coords = [
-				    	e.x === undefined ? mouse.pointer[0] : parseCoord(e.x),
-				    	e.y === undefined ? mouse.pointer[1] : parseCoord(e.y)
-				    ],
-				    decay = e.decay;
-				
-				// Store position
-				local.freeze = { pointer: coords };
-				
-				// Create local mouse, passing in current pointer with options
-				local.mouse = new Mouse(parseBool(global.xparallax), parseBool(global.yparallax), global.decay, mouse.pointer);
-				
-				if (decay !== undefined) { local.mouse.decay = decay; }
-				
-				// Start animating
-				jQuery.event.add(this, frameEvent, update, global);
-			}, {
-				global: global,
-				local: local
+			function targetInside() {
+				// Pointer hits the target pointer inside the port
+				pointerFn = pointerOnTarget;
+			}
+			
+			function targetOutside() {
+				// Pointer hits the target pointer outside the port
+				timer.remove(frame);
+			}
+			
+			
+			if (jQuery.data(node, 'parallax')) {
+				elem.unparallax();
+			}
+			
+			jQuery.data(node, 'parallax', {
+				port: port,
+				events: events,
+				parallax: parallax
 			});
 			
-			jQuery.event.add( this, 'unfreeze', function(e){
-				var elem = jQuery(this),
-				    global = e.data.global,
-				    local = e.data.local,
-				    decay = e.decay,
-				    pointer;
-				
-				if (!local.freeze) { return; }
-				
-				// Create local mouse, passing local freeze pointer with options
-				pointer = local.mouse ? local.mouse.pointer : local.freeze.pointer ;
-				local.mouse = new Mouse(parseBool(global.xparallax), parseBool(global.yparallax), global);
-				local.mouse.pointer = pointer;
-				
-				// Override decay with decay passed as e.decay
-				if (decay !== undefined) local.mouse.decay = decay;
-				
-				// Destroy local.freeze
-				delete local.freeze;
-				
-				// Remove freeze class and start animating
-				elem.removeClass(options.freezeClass);
-				
-				// Start animating
-				jQuery.event.add(this, frameEvent, update, global);
-			}, {
-				global: global,
-				local: local
-			});
+			port.elem.on(events);
+			port.layers = port.layers? port.layers.add(node): jQuery(node);
+			
+			/*function freeze() {
+				freeze = true;
+			}
+			
+			function unfreeze() {
+				freeze = false;
+			}*/
+			
+			/*jQuery.event.add(this, 'freeze.parallax', freeze);
+			jQuery.event.add(this, 'unfreeze.parallax', unfreeze);*/
 		});
 	};
 	
-	// EXPOSE
-	
-	jQuery.fn[plugin].options = options;
-	
-	// RUN
-	
-	jQuery(document).ready(function(){
-		// Pick up and store mouse position on jQuery(document)
-		// IE does not register mousemove on jQuery(window)
-		jQuery(document)
-		.mousemove(function(e){
-			pointer = [e.pageX, e.pageY];
+	jQuery.fn.unparallax = function(bool) {
+		return this.each(function() {
+			var data = jQuery.data(this, 'parallax');
+			
+			// This elem is not parallaxed
+			if (!data) { return; }
+			
+			jQuery.removeData(this, 'parallax');
+			unparallax(this, data.port, data.events);
+			if (bool) { unstyle(data.parallax); }
 		});
+	};
+	
+	jQuery.fn.parallax.options = options;
+	
+	// Pick up and store mouse position on document: IE does not register
+	// mousemove on window.
+	doc.on('mousemove.parallax', function(e){
+		mouse = [e.pageX, e.pageY];
 	});
-
 }(jQuery));

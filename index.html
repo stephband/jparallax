@@ -81,9 +81,10 @@
       <li><a href="http://github.com/stephband/jparallax">github.com/stephband/jparallax</a></li>
     </ul>
 
-    <h3>Instantiation</h3>
+    <h3>Setup and teardown</h3>
 <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#003369;">jQuery</span>( <span style="color:#760f15;">'.parallax-layer'</span> ).<span style="color:#003369;">parallax</span>( options );</pre>
-    
+<pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;"><span style="color:#003369;">jQuery</span>( <span style="color:#760f15;">'.parallax-layer'</span> ).<span style="color:#003369;">unparallax</span>();</pre>
+
     <h3>What does jquery.parallax do?</h3>
     <img src="images/diagram.png" alt="Diagram of parallax layers." class="right diagram"/>
     <p>jParallax turns nodes into absolutely positioned layers that move in response to the mouse. Depending on their dimensions these layers move at different rates, in a parallaxy kind of way.</p>
@@ -129,18 +130,24 @@
       <li><a href="demos/target.html">demos/target.html</a> - demonstrates how smoothly jParallax handles window resizing.</li>
     </ul>
     
-    <h3>Using jParallax</h3>
-    <p>The default behaviour of jParallax is to show the whole width of a layer in response to the mouse travelling the whole width of the mouseport. When the mouse is moved to the extreme left-hand side of the mouseport the left-hand side of the layer meets the left-hand side of its viewport, and when the mouse is moved to the extreme right-hand side of the mouseport the right-hand side of the layer arrives at the right hand-side of its viewport.</p>
-    <p>Therefore, the simplest way to use jParallax is to make the layers different sizes using CSS.  Bigger layers move faster (and thus appear closer), and unless a layer is smaller than the viewport, its edges are never seen. The <a href="demos/index.html">Colour Drops Demo</a> is made in exactly this way, with jParallax in its default state, and the 'speed' of the layers controlled simply by making the images different sizes. Only the mouseport option is defined, to make it the same as the viewport.</p>
+    <h3>Using jquery.parallax</h3>
+    <p>The default behaviour of jParallax is to show the whole width of a layer in response to the mouse travelling the whole width of the mouseport. When the mouse is moved to the extreme left-hand side of the mouseport the left-hand side of the layer meets the left-hand side of its viewport, and when the mouse is moved to the extreme right-hand side of the mouseport the right-hand side of the layer arrives at the right hand-side of its viewport. In this way, bigger layers move faster.</p>
+    <p>The simplest way to use jParallax is to give layers different sizes in CSS. The <a href="demos/index.html">Colour Drops Demo</a> is made like this, with jParallax in its default state and the 'speed' of the layers controlled by the size of the images. Only the mouseport option is defined.</p>
+    <p>One problem with the default approach is that the uppermost layer is in front of the others, and any links in the layers underneath are not clickable. To solve this, jquery.parallax also accepts the options <code>width</code> and <code>height</code>. By making layers very small in CSS, but overriding those dimensions with the <code>width</code> and <code>height</code> options, it is possible to position links inside those layers and avoid the upper layers from obscuring the lower.</p>
     
     <h3>CSS</h3>
-    <p>There are various ways to style jParallax effectively. The classic approach is the 'viewport' effect, as in the example above. To see layers through a viewport, wrap them in a container with a style similar to:</p>
-    <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;">.parallax-viewport
-      { <span style="color:#88134f;">position</span>:<span style="color:#9b4400;">relative</span>; <span style="color:#88134f;">overflow</span>:<span style="color:#9b4400;">hidden</span>; <span style="color:#88134f;">width</span>:<span style="color:#0000ff;"><em>n</em>px</span>; <span style="color:#88134f;">height</span>:<span style="color:#0000ff;"><em>n</em>px</span>; }</pre>
+    <p>The classic style is the 'viewport' effect. To see layers through a viewport, wrap them in a container with the style:</p>
+    <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;">.parallax-viewport {
+  <span style="color:#88134f;">position</span>:<span style="color:#9b4400;">relative</span>;
+  <span style="color:#88134f;">overflow</span>:<span style="color:#9b4400;">hidden</span>;
+  <span style="color:#88134f;">width</span>:<span style="color:#0000ff;"><em>n</em>px</span>;
+  <span style="color:#88134f;">height</span>:<span style="color:#0000ff;"><em>n</em>px</span>;
+}</pre>
     <p>The <code>position</code> declaration sets up the viewport as an offset parent for the layers, while <code>overflow:hidden;</code> stops them being visible outside its boundaries.  In order for the layers to respond, they must be given:</p>
-    <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;">.parallax-layer
-      { <span style="color:#88134f;">position</span>:<span style="color:#9b4400;">absolute</span>; }</pre>
-    <p>There is a basic stylesheet included with the download that provides these classes, and the <a href="demos/index.html">demos</a> are a good reference for some other effects you can achieve.</p>
+    <pre style="text-align:left;color:#000000; background-color:#e8ecf0; padding:0.5em 1em 0.5em 1em;">.parallax-layer {
+  <span style="color:#88134f;">position</span>:<span style="color:#9b4400;">absolute</span>;
+}</pre>
+    <p>The stylesheet included with jquery.parallax provides these classes, and the <a href="demos/index.html">demos</a> are a good reference for some other effects you can achieve.</p>
     <p>We all like tweaky-tweaky. jQuery.parallax also provides options and event bindings that give you control over a layer's behaviour.</p>
     
     <h3>Options</h3>
@@ -306,8 +313,8 @@
 
 	
 
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
-  <script src="js/jquery.event.frame.js"></script>
+  <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script-->
+  <script src="js/jquery-1.7.2.js"></script>
   <script src="js/jquery.parallax.js"></script>
   <script>
   jQuery(document).ready(function(){
