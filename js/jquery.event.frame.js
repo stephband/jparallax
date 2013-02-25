@@ -98,7 +98,7 @@ if (!jQuery.event.special.frame) {
         },
         handler: function(event){
             // let jQuery handle the calling of event handlers
-            jQuery.event.handle.apply(this, arguments);
+            jQuery.event.dispatch.apply(this, arguments);
         }
     };
 }
