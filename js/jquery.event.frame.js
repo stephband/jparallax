@@ -98,7 +98,14 @@ if (!jQuery.event.special.frame) {
         },
         handler: function(event){
             // let jQuery handle the calling of event handlers
-            jQuery.event.handle.apply(this, arguments);
+
+            // In jQuery >= 1.9.0 jQuery.event.handle is remove, see:
+            // http://jquery.com/upgrade-guide/1.9/#other-undocumented-properties-and-methods
+            if (jQuery.event.handle) {
+                jQuery.event.handle.apply(this, arguments);
+            } else {
+                jQuery.event.dispatch.apply(this, arguments);
+            }
         }
     };
 }
