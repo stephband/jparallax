@@ -19,7 +19,7 @@
     "move",
     "interface",
     "layer"
-  ]
+  ],
   "license": "WTFPL",
   "ignore": [
     "**/.*",
