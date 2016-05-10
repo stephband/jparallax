@@ -497,6 +497,11 @@
 				updateCss
 			);
 
+			// Also if the mouse happens to already be over the viewport, trigger an initial "mouseenter" now (since
+			// otherwise user would need to move mouse completely out of the viewport and then back in, in order to
+			// initialize the effect when it should already be started).
+			if (elem.is(':hover')) elem.mouseenter();
+
 			/*function freeze() {
 				freeze = true;
 			}
