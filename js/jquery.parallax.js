@@ -482,7 +482,21 @@
 			
 			port.elem.on(events);
 			port.layers = port.layers? port.layers.add(node): jQuery(node);
-			
+
+			// Initialize this layer at the defined x/y origins now. Subsequent calls to this "pointerFn" will happen
+			// via the Timer class in repeated calls to the frame() function as the mouse either enter/leaves the
+			// viewport (a.k.a. "mouseport").
+			pointerFn(
+				// Pointer relative position (0 to 1), x and y. Usually in the middle (i.e. 0.5, 0.5)
+				[options.xorigin, options.yorigin],
+				[0, 0],          // Pointer relative position we're trying to animate to (0 to 1), x and y.
+				port.threshold,
+				0,               // Decay, which we want to override so we initialize immediately.
+				parallax,
+				targetFn,
+				updateCss
+			);
+
 			/*function freeze() {
 				freeze = true;
 			}
