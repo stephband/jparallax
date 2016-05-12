@@ -346,7 +346,7 @@
 		return css;
 	}
 	
-	function pointerOffTarget(targetPointer, prevPointer, threshold, decay, parallax, targetFn, updateFn) {
+	function pointerOffTarget(targetPointer, prevPointer, threshold, decay, parallax, targetFn, updateFn, portElem) {
 		var pointer, x;
 		
 		if ((!parallax[0] || Math.abs(targetPointer[0] - prevPointer[0]) < threshold[0]) &&
@@ -369,13 +369,14 @@
 		return updateFn(pointer);
 	}
 	
-	function pointerOnTarget(targetPointer, prevPointer, threshold, decay, parallax, targetFn, updateFn) {
+	function pointerOnTarget(targetPointer, prevPointer, threshold, decay, parallax, targetFn, updateFn, portElem) {
 		// Don't bother updating if the pointer hasn't changed.
 		if (targetPointer[0] === prevPointer[0] && targetPointer[1] === prevPointer[1]) {
 			return;
 		}
-		
-		return updateFn(targetPointer);
+
+		// Pass the responsibility for updating back to "pointerOffTarget" now that we're off the target again.
+		portElem.trigger('parallax.setPointerFn', [pointerOffTarget]);
 	}
 	
 	function unport(elem, events, winEvents) {
@@ -422,32 +423,38 @@
 		
 		return this.each(function(i) {
 			var node      = this,
-			    elem      = jQuery(this),
-			    opts      = args[i + 1] ? jQuery.extend({}, options, args[i + 1]) : options,
-			    decay     = opts.decay,
-			    size      = layerSize(elem, opts.width, opts.height),
-			    origin    = layerOrigin(opts.xorigin, opts.yorigin),
-			    px        = layerPx(opts.xparallax, opts.yparallax),
-			    parallax  = layerParallax(opts.xparallax, opts.yparallax, px),
-			    offset    = layerOffset(parallax, px, origin, size),
-			    position  = layerPosition(px, origin),
-			    pointer   = layerPointer(elem, parallax, px, offset, size),
-			    pointerFn = pointerOffTarget,
-			    targetFn  = targetInside,
-			    events = {
-			    	'mouseenter.parallax': function mouseenter(e) {
-			    		pointerFn = pointerOffTarget;
-			    		targetFn = targetInside;
-			    		timer.add(frame);
-			    		timer.start();
-			    	},
-			    	'mouseleave.parallax': function mouseleave(e) {
-			    		// Make the layer come to rest at it's limit with inertia
-			    		pointerFn = pointerOffTarget;
-			    		// Stop the timer when the the pointer hits target
-			    		targetFn = targetOutside;
-			    	}
-			    };
+				elem      = jQuery(this),
+				opts      = args[i + 1] ? jQuery.extend({}, options, args[i + 1]) : options,
+				decay     = opts.decay,
+				size      = layerSize(elem, opts.width, opts.height),
+				origin    = layerOrigin(opts.xorigin, opts.yorigin),
+				px        = layerPx(opts.xparallax, opts.yparallax),
+				parallax  = layerParallax(opts.xparallax, opts.yparallax, px),
+				offset    = layerOffset(parallax, px, origin, size),
+				position  = layerPosition(px, origin),
+				pointer   = layerPointer(elem, parallax, px, offset, size),
+				pointerFn = pointerOffTarget,
+				targetFn  = targetInside,
+				events = {
+					'mouseenter.parallax': function mouseenter(e) {
+						pointerFn = pointerOffTarget;
+						targetFn = targetInside;
+						timer.add(frame);
+						timer.start();
+					},
+
+					'mouseleave.parallax': function mouseleave(e) {
+						// Make the layer come to rest at it's limit with inertia
+						pointerFn = pointerOffTarget;
+						// Stop the timer when the the pointer hits target
+						targetFn = targetOutside;
+					},
+
+					// TODO: Needed to set this up as an event listener due to scope issues.
+					'parallax.setPointerFn': function setPointerFn(e, newPointerFn) {
+						pointerFn = newPointerFn;
+					}
+				};
 			
 			function updateCss(newPointer) {
 				var css = layerCss(parallax, px, offset, size, position, newPointer);
@@ -456,7 +463,10 @@
 			}
 			
 			function frame() {
-				pointerFn(port.pointer, pointer, port.threshold, decay, parallax, targetFn, updateCss);
+				// TODO: Might make sense to eventually refactor calls to pointerFN to simply pass the port instance.
+				// TODO: Also to have the entire initialization to be based on a jQuery set of just the port [port] and
+				// TODO: pass the layers as an option instead of the other way around, i.e. [layer, layer, ...]
+				pointerFn(port.pointer, pointer, port.threshold, decay, parallax, targetFn, updateCss, elem);
 			}
 			
 			function targetInside() {
