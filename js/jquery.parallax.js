@@ -513,7 +513,23 @@
 	
 	// Pick up and store mouse position on document: IE does not register
 	// mousemove on window.
-	doc.on('mousemove.parallax', function(e){
-		mouse = [e.pageX, e.pageY];
+	doc.on('mousemove.parallax touchstart.parallax touchmove.parallax touchend.parallax', function(e){
+		var x, y;
+		if (e.pageX) {
+			x = e.pageX;
+			y = e.pageY;
+
+		} else if (e.originalEvent.touches) {
+			var touches = e.originalEvent.touches;
+			if (touches.length == 0) return;
+
+			x = touches[0].pageX;
+			y = touches[0].pageY;
+
+		} else {
+			// No coords, nothing to do.
+			return;
+		}
+		mouse = [x, y];
 	});
 }(jQuery));
