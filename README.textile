@@ -6,4 +6,4 @@ jquery.parallax turns nodes into absolutely positioned layers that move in respo
 
 h2. Demos and docs
 
-<a href="http://stephband.info/jparallax/">stephband.info/jparallax/</a>
+<a href="http://stephen.band/jparallax/">stephen.band/jparallax/</a>
