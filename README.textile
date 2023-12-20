@@ -1,3 +1,8 @@
+> [!WARNING]  
+> This plugin is unsupported. The author left jQuery behind some time ago.
+> Note that it has been possible to make parallax effects in near-pure CSS for some time, using a combination of `translateZ()` and `perspective`. It is srongly suggested that you explore that avenue, as the resulting animations are optimised for the GPU, and smoother than this plugin can ever be.
+
+
 h1. jquery.parallax
 
 h2. What does jquery.parallax do?
