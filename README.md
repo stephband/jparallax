@@ -1,5 +1,5 @@
 > [!WARNING]  
-> This plugin is unsupported. Note that it has been possible to make parallax effects in near-pure CSS for some time, using a combination of `translateZ()`, `perspective`, and either a bit of JS for pointer tracking or a scrolling container. It is srongly suggested that you explore that avenue, as the resulting animations are optimised for the GPU, and smoother than this plugin can ever be. There is parallax scrolling page that I made based on this technique [here](https://decouverte-metiers.epfl.ch/fr/s/quartier-1/)
+> This plugin is not maintained. Note that it has been possible to make parallax effects in near-pure CSS for some time, using a combination of `translateZ()`, `perspective`, and either a bit of JS for pointer tracking or a scrolling container. It is srongly suggested that you explore that avenue, as the resulting animations are optimised for the GPU, and smoother than this plugin can ever be. There is parallax scrolling page that I made based on this technique [here](https://decouverte-metiers.epfl.ch/fr/s/quartier-1/)
 
 
 # jquery.parallax
